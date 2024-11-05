@@ -1,3 +1,6 @@
-pub enum Langauge {
+pub enum Language {
     English,
+    German,
+    Spanish,
 }
+impl Language {}

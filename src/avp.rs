@@ -1,32 +1,25 @@
 use ba2::{
-    fo4::{Archive, ArchiveOptionsBuilder, Version},
+    fo4::{Archive, Version},
     Reader,
 };
 use std::path::Path;
-
-pub fn temp_get_version(path: &Path) -> Option<()> {
-    let (archive, options) = Archive::read(path).ok()?;
-    let file_name = path.file_name()?.to_str()?;
-    std::println!("name: {}, version: {:?}", file_name, options.version());
-    Some(())
-}
 
 pub fn needs_patch(path: &Path) -> bool {
     let Ok((_archive, options)) = Archive::read(path) else {
         todo!()
     };
-    let version_number = options.version();
+    let version_number: Version = options.version();
     match version_number {
         Version::v1 => return false,
-        Version::v2 => return false, // starfield version
-        Version::v3 => return false, // starfield version
         Version::v7 => return true,
         Version::v8 => return true,
+        Version::v2 => return false, // starfield version, report error
+        Version::v3 => return false, // starfield version, report error
     }
 }
 
 pub fn patch_version(path: &Path) {
-    let Ok((archive, options)) = Archive::read(path) else {
+    let Ok((_archive, options)) = Archive::read(path) else {
         todo!()
     };
     let version_number = options.version();
@@ -43,8 +36,11 @@ pub fn patch_version(path: &Path) {
 
 pub fn select_archive() {}
 
-pub enum Language {
-    English,
+pub fn temp_get_version(path: &Path) -> Option<()> {
+    let (_archive, options) = Archive::read(path).ok()?;
+    let file_name = path.file_name()?.to_str()?;
+    std::println!("name: {}, version: {:?}", file_name, options.version());
+    Some(())
 }
 
 /*
