@@ -4,6 +4,10 @@ use ba2::{
 };
 use std::path::Path;
 
+// maybe use tauri_api to prompt for file/dir select
+// https://github.com/tauri-apps/tauri/discussions/3275
+// https://docs.rs/tauri-api/latest/tauri_api/index.html
+
 pub fn needs_patch(path: &Path) -> bool {
     let Ok((_archive, options)) = Archive::read(path) else {
         todo!()
