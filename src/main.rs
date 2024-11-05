@@ -10,3 +10,9 @@ use std::fs;
 fn main() {
     println!("[archive-version-patcher]");
 }
+
+#[allow(dead_code)]
+fn patch_archive() -> bool {
+
+    return false;
+}
