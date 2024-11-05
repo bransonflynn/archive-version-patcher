@@ -25,22 +25,25 @@ pub fn patch_version(path: &Path) {
     let version_number = options.version();
     match version_number {
         Version::v1 => std::println!("no patch needed"),
-        Version::v2 => std::println!("invalid ba2"), // starfield version
-        Version::v3 => std::println!("invalid ba2 needed"), // starfield version
         Version::v7 => {
+            todo!();
             //options.OptionsBuilder.version(options, );
         }
         Version::v8 => todo!(),
+        Version::v2 => std::println!("invalid ba2"), // starfield version, report error
+        Version::v3 => std::println!("invalid ba2 needed"), // starfield version, report error
     }
 }
 
 pub fn select_archive() {}
 
+pub fn select_directory() {}
+
 pub fn temp_get_version(path: &Path) -> Option<()> {
     let (_archive, options) = Archive::read(path).ok()?;
     let file_name = path.file_name()?.to_str()?;
     std::println!("name: {}, version: {:?}", file_name, options.version());
-    Some(())
+    return Some(());
 }
 
 /*
