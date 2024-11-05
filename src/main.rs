@@ -1,5 +1,6 @@
 use std::path::Path;
 pub mod avp;
+pub mod avplang;
 
 fn main() {
     println!("[archive-version-patcher]\n");
