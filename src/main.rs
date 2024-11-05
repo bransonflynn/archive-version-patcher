@@ -8,13 +8,15 @@ fn main() {
     println!("[archive-version-patcher]\n");
     //example_write();
     let path =
-        Path::new(r"C:\Users\brans\Desktop\archive patcher testing\tester.ba2");
-    std::println!("{}", needs_patch(path));
+        Path::new(r"C:\Users\brans\Desktop\archive patcher testing\Fallout4 - Interface.ba2");
+    //std::println!("{}", needs_patch(path));
+    get_version(path);
 }
 
-fn get_version(path: &Path) -> Option<()> {
+fn temp_get_version(path: &Path) -> Option<()> {
     let (archive, options) = Archive::read(path).ok()?;
-    std::println!("version: {:?}", options.version());
+    let file_name = path.file_name()?.to_str()?;
+    std::println!("name: {}, version: {:?}", file_name, options.version());
     Some(())
 }
 
