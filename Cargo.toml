@@ -2,5 +2,12 @@
 name = "archive-version-patcher"
 version = "0.1.0"
 edition = "2021"
+authors = ["bp42s"]
+description = "Tool to patch ba2 archive versions for Fallout 4"
+repository = "https://github.com/bransonflynn/archive-version-patcher"
+documentation = "https://github.com/bransonflynn/archive-version-patcher"
+license = "MIT"
+
 
 [dependencies]
+ba2 = "3.0.0"
