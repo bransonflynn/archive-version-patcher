@@ -1,7 +1,7 @@
 use ba2::{fo4::Archive, Reader};
 use std::path::Path;
 pub mod avp;
-pub mod avplang;
+pub mod avp_data;
 
 /*
 use clap::Parser;
@@ -20,7 +20,7 @@ fn main() {
     // setup language
     // read from config toml for data
     // setup lang enum with int read from config toml with match statement
-    let _language: avplang::Language = avplang::Language::English;
+    let _language: avp_data::Language = avp_data::Language::English;
 
     //let args = CLI::parse();
     //std::println!("pattern: {:?}, path: {:?}", args.pattern, args.path);
@@ -29,11 +29,24 @@ fn main() {
 }
 
 pub fn main_impl() -> Option<()> {
-    let path: &Path = Path::new(r"./src/test_archives/fo4_ng.ba2");
+    let path: &Path = Path::new(r"./src/test_archives/fo4_tester.ba2");
     let archive: (ba2::fo4::Archive, ba2::fo4::ArchiveOptions) = Archive::read(path).ok()?;
 
     std::println!("name: {:?}", path.file_name().unwrap());
     std::println!("version: {:?}", avp::get_version(&archive));
     std::println!("needs patch: {:?}", avp::needs_patch(&archive));
+
+    std::println!("\n");
+    avp::display(&archive);
+
+    std::println!("\n");
+    avp::patch_version(archive);
+
+    let path: &Path = Path::new(r"./src/test_archives/fo4_tester.ba2");
+    let archive: (ba2::fo4::Archive, ba2::fo4::ArchiveOptions) = Archive::read(path).ok()?;
+    std::println!("name: {:?}", path.file_name().unwrap());
+    std::println!("version: {:?}", avp::get_version(&archive));
+    std::println!("needs patch: {:?}", avp::needs_patch(&archive));
+
     return Some(());
 }

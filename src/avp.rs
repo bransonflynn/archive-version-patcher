@@ -1,5 +1,7 @@
+#[allow(unused_imports)]
 use ba2::{
-    fo4::{Archive, Version},
+    fo4::{Archive, ArchiveKey, ArchiveOptions, Chunk, File, Version},
+    prelude::*,
     Reader,
 };
 use std::path::Path;
@@ -49,15 +51,37 @@ pub fn patch_version_temp(path: &Path) {
     }
 }
 
+pub fn patch_version(mut archive: (ba2::fo4::Archive, ba2::fo4::ArchiveOptions)) {
+    //let archive_options: ArchiveOptions = archive.1;
+    //let old_version: Version = ba2::fo4::Version::v1;
+    //let options_format = ba2::fo4::FileReadOptions::builder().format(ba2::fo4::Format::DX10).build();
+    //let options_version: ArchiveOptions = ba2::fo4::ArchiveOptions::builder().version(Version::v1).build();
+    let options_new: ArchiveOptions = ba2::fo4::ArchiveOptions::builder()
+        .version(Version::v1)
+        .build();
+
+    archive.1 = options_new;
+}
+
 pub fn select_archive() {}
 
 pub fn select_directory() {}
 
-pub fn display(_archive: &(ba2::fo4::Archive, ba2::fo4::ArchiveOptions)) -> String {
-    String::from("value")
+pub fn display(archive: &(ba2::fo4::Archive, ba2::fo4::ArchiveOptions)) {
+    // std::println!("name: {:?}", &archive); TODO
+    std::println!("version: {:?}", get_version(&archive));
+    std::println!("needs patch: {:?}", needs_patch(&archive));
 }
 
 /*
+
+//let builder = ba2::fo4::archive::OptionsBuilder::OptionsBuilder(archive.1);
+    //archive.0.header
+    //let _ = ArchiveOptions::builder()
+    //    .version(Version::v1)
+    //    .build();
+    //let options = ba2::fo4::FileReadOptions::builder().version(ba2::fo4::Version::v1).build();
+
 // READ
 pub fn example() -> Option<()> {
     let path = Path::new(r"path/to/fallout4/Data/Fallout4 - Interface.ba2");
