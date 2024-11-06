@@ -102,8 +102,6 @@ impl eframe::App for AppGUI {
 
             ui.separator();
 
-            
-
             ui.with_layout(
                 egui::Layout::bottom_up(egui::Align::LEFT),
                 |ui: &mut egui::Ui| {
@@ -116,7 +114,6 @@ impl eframe::App for AppGUI {
         });
     }
 }
-
 
 // fn appgui_footer(ui: &mut egui::Ui) {
 //     ui.horizontal(|ui| {
