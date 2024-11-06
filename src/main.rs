@@ -8,6 +8,17 @@ use toml;
 pub mod avp;
 pub mod avp_data;
 
+// Top level struct to hold the TOML data.
+#[derive(Deserialize)]
+struct ConfigData {
+    config: TomlConfig,
+}
+// Config struct holds to data from the `[config]` section.
+#[derive(Deserialize)]
+struct TomlConfig {
+    language: u32,
+}
+
 #[derive(Default)]
 struct AppGUI {}
 
@@ -91,17 +102,6 @@ pub fn main_impl() -> Option<()> {
     std::println!("needs patch: {:?}", avp::needs_patch(&archive));
 
     return Some(());
-}
-
-// Top level struct to hold the TOML data.
-#[derive(Deserialize)]
-struct ConfigData {
-    config: TomlConfig,
-}
-// Config struct holds to data from the `[config]` section.
-#[derive(Deserialize)]
-struct TomlConfig {
-    language: u32,
 }
 
 pub fn parse_config() -> avp_data::Language {
