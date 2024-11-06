@@ -3,6 +3,7 @@ use serde_derive::Deserialize;
 use std::fs;
 use std::path::Path;
 //use std::process::exit;
+use egui;
 use toml;
 pub mod avp;
 pub mod avp_data;
@@ -23,8 +24,8 @@ fn main() {
     println!("[archive-version-patcher]\n");
 
     // parse config options
-    let lang: avp_data::Language = parse_config();
-    let msg: avp_data::Message = avp_data::Message::Default;
+    let _lang: avp_data::Language = parse_config();
+    let _msg: avp_data::Message = avp_data::Message::Default;
 
     //let args = CLI::parse();
     //std::println!("pattern: {:?}, path: {:?}", args.pattern, args.path);
