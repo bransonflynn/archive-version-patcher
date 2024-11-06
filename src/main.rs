@@ -19,38 +19,118 @@ struct TomlConfig {
     language: u32,
 }
 
-#[derive(Default)]
-struct AppGUI {}
+#[derive(serde::Deserialize, serde::Serialize)]
+#[serde(default)]
+struct AppGUI {
+    // Example stuff:
+    label: String,
 
+    #[serde(skip)] // This how you opt-out of serialization of a field
+    value: f32,
+}
 impl AppGUI {
     fn new(_cc: &eframe::CreationContext<'_>) -> Self {
         Self::default()
     }
 }
+impl Default for AppGUI {
+    fn default() -> Self {
+        Self {
+            // Example stuff:
+            label: "Hello World!".to_owned(),
+            value: 2.7,
+        }
+    }
+}
 
 impl eframe::App for AppGUI {
+    /// Called each time the UI needs repainting, which may be many times per second.
     fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
-        egui::CentralPanel::default().show(ctx, |ui: &mut egui::Ui| {
+        // Put your widgets into a `SidePanel`, `TopBottomPanel`, `CentralPanel`, `Window` or `Area`.
+        // For inspiration and more examples, go to https://emilk.github.io/egui
+
+        egui::TopBottomPanel::top("top_panel").show(ctx, |ui| {
+            // The top panel is often a good place for a menu bar:
+
+            egui::menu::bar(ui, |ui| {
+                // NOTE: no File->Quit on web pages!
+                let is_web = cfg!(target_arch = "wasm32");
+                if !is_web {
+                    ui.menu_button("File", |ui| {
+                        if ui.button("Quit").clicked() {
+                            ctx.send_viewport_cmd(egui::ViewportCommand::Close);
+                        }
+                    });
+                    ui.add_space(16.0);
+                }
+
+                egui::widgets::global_theme_preference_buttons(ui);
+            });
+        });
+
+        egui::CentralPanel::default().show(ctx, |ui| {
             ui.heading("[archive-version-patcher]");
+            ui.horizontal(|ui| {
+                ui.label("by bp42s");
+            });
+
+            ui.separator();
+
+            ui.horizontal(|ui| {
+                ui.label("Select an archive to patch:");
+            });
             if ui
                 .button(egui::RichText::new("Select Archive").color(egui::Color32::GREEN))
                 .clicked()
             {
                 appgui_button_select_archive()
             }
+            ui.horizontal(|ui| {
+                ui.label("Select a directory to patch:");
+            });
             if ui
                 .button(egui::RichText::new("Select Directory").color(egui::Color32::GREEN))
                 .clicked()
             {
                 appgui_button_select_directory()
             }
-            ui.hyperlink_to(
-                "Source",
-                "https://github.com/bransonflynn/archive-version-patcher/",
+
+            ui.separator();
+            ui.horizontal(|ui| {
+                ui.label("Patching progress:");
+            });
+
+            ui.separator();
+
+            
+
+            ui.with_layout(
+                egui::Layout::bottom_up(egui::Align::LEFT),
+                |ui: &mut egui::Ui| {
+                    //appgui_footer(ui);
+                    ui.hyperlink_to("Source", "https://www.nexusmods.com/fallout4/mods/89051");
+                    ui.separator();
+                    egui::warn_if_debug_build(ui);
+                },
             );
         });
     }
 }
+
+
+// fn appgui_footer(ui: &mut egui::Ui) {
+//     ui.horizontal(|ui| {
+//         ui.spacing_mut().item_spacing.x = 0.0;
+//         ui.label("Powered by ");
+//         ui.hyperlink_to("egui", "https://github.com/emilk/egui");
+//         ui.label(" and ");
+//         ui.hyperlink_to(
+//             "eframe",
+//             "https://www.nexusmods.com/fallout4/mods/89051?tab=files",
+//         );
+//         ui.label(".");
+//     });
+// }
 
 pub fn appgui_button_select_archive() {
     std::println!("Select Archive button clicked");

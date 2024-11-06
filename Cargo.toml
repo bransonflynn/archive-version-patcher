@@ -13,11 +13,24 @@ license = "MIT"
 anyhow = "1.0.92"
 ba2 = "3.0.0"
 clap = { version = "4.5.20", features = ["derive"] }
-eframe = "0.29.1"
+eframe = { version = "0.29.1", default-features = false, features = [
+    "accesskit",     # Make egui compatible with screen readers. NOTE: adds a lot of dependencies.
+    "default_fonts", # Embed the default egui fonts.
+    "glow",          # Use the glow rendering backend. Alternative: "wgpu".
+    "persistence",   # Enable restoring app state when restarting the app.
+] }
 egui = "0.29.1"
-serde = "1.0.214"
+serde = { version = "1.0.214", features = ["derive"] }
 serde_derive = "1.0.214"
 toml = "0.8.19"
 
 [build-dependencies]
 winresource = "0.1.17"
+
+
+#[profile.release]
+#opt-level = 'z'     # Optimize for size
+#lto = true          # Enable link-time optimization
+#codegen-units = 1   # Reduce number of codegen units to increase optimizations
+#panic = 'abort'     # Abort on panic - note to keep this disabled for memory leaks
+#strip = true        # Strip symbols from binary*
