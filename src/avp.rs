@@ -8,12 +8,22 @@ use std::path::Path;
 // https://github.com/tauri-apps/tauri/discussions/3275
 // https://docs.rs/tauri-api/latest/tauri_api/index.html
 
-pub fn needs_patch(path: &Path) -> bool {
-    let Ok((_archive, options)) = Archive::read(path) else {
-        todo!()
-    };
-    let version_number: Version = options.version();
-    match version_number {
+pub fn get_version(archive: &(ba2::fo4::Archive, ba2::fo4::ArchiveOptions)) -> ba2::fo4::Version {
+    return archive.1.version();
+}
+
+pub fn version_to_string(vers: ba2::fo4::Version) -> String {
+    match vers {
+        Version::v1 => return String::from("v1"),
+        Version::v7 => return String::from("v7"),
+        Version::v8 => return String::from("v8"),
+        Version::v2 => return String::from("v2"), // sf version, report error
+        Version::v3 => return String::from("v3"), // sf version, report error
+    }
+}
+
+pub fn needs_patch(archive: &(ba2::fo4::Archive, ba2::fo4::ArchiveOptions)) -> bool {
+    match archive.1.version() {
         Version::v1 => return false,
         Version::v7 => return true,
         Version::v8 => return true,
@@ -22,11 +32,11 @@ pub fn needs_patch(path: &Path) -> bool {
     }
 }
 
-pub fn patch_version(path: &Path) {
+pub fn patch_version_temp(path: &Path) {
     let Ok((_archive, options)) = Archive::read(path) else {
         todo!()
     };
-    let version_number = options.version();
+    let version_number: Version = options.version();
     match version_number {
         Version::v1 => std::println!("no patch needed"),
         Version::v7 => {
@@ -43,15 +53,8 @@ pub fn select_archive() {}
 
 pub fn select_directory() {}
 
-pub fn temp_get_version(path: &Path) -> Option<()> {
-    let (_archive, options) = Archive::read(path).ok()?;
-    let file_name = path.file_name()?.to_str()?;
-    std::println!("name: {}, version: {:?}", file_name, options.version());
-    return Some(());
-}
-
-pub fn temp_get_version_archive(archive: ba2::fo4::Archive) -> Option<()> {
-
+pub fn display(_archive: &(ba2::fo4::Archive, ba2::fo4::ArchiveOptions)) -> String {
+    String::from("value")
 }
 
 /*

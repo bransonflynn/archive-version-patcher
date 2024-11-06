@@ -1,12 +1,7 @@
-pub enum Lang {
+pub enum Language {
     English,
     German,
     Spanish,
-}
-impl Lang {}
-
-pub struct Language {
-    pub lang: Lang,
 }
 impl Language {
     pub fn patch_success(&self) -> String {
@@ -17,11 +12,15 @@ impl Language {
         return String::from("temp_patch_fail");
     }
 
+    pub fn patch_not_needed(&self) -> String {
+        return String::from("temp_patch_not_needed");
+    }
+
     pub fn error_invalid_version(&self) -> String {
-        match &self.lang {
-            Lang::English => String::from("ERROR: Invalid version"),
-            Lang::German => todo!(),
-            Lang::Spanish => todo!(),
+        match self {
+            Language::English => String::from("ERROR: Invalid version"),
+            Language::German => todo!(),
+            Language::Spanish => todo!(),
         }
     }
 }
