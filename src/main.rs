@@ -22,11 +22,9 @@ struct TomlConfig {
 #[derive(serde::Deserialize, serde::Serialize)]
 #[serde(default)]
 struct AppGUI {
-    // Example stuff:
-    label: String,
-
+    name: String,
     #[serde(skip)] // This how you opt-out of serialization of a field
-    value: f32,
+    version: (u32, u32, u32),
 }
 impl AppGUI {
     fn new(_cc: &eframe::CreationContext<'_>) -> Self {
@@ -36,9 +34,8 @@ impl AppGUI {
 impl Default for AppGUI {
     fn default() -> Self {
         Self {
-            // Example stuff:
-            label: "Hello World!".to_owned(),
-            value: 2.7,
+            name: String::from("[archive-version-patcher]"),
+            version: (0, 1, 0),
         }
     }
 }
@@ -105,8 +102,18 @@ impl eframe::App for AppGUI {
             ui.with_layout(
                 egui::Layout::bottom_up(egui::Align::LEFT),
                 |ui: &mut egui::Ui| {
+                    ui.separator();
+                    // these elements are displayed in reverse order
                     //appgui_footer(ui);
-                    ui.hyperlink_to("Source", "https://www.nexusmods.com/fallout4/mods/89051");
+                    ui.hyperlink_to("MIT License", "https://mit-license.org/");
+                    ui.hyperlink_to(
+                        "Source",
+                        "https://www.nexusmods.com/fallout4/mods/89051?tab=files",
+                    );
+                    ui.hyperlink_to(
+                        "Nexus Page",
+                        "https://www.nexusmods.com/fallout4/mods/89051",
+                    );
                     ui.separator();
                     egui::warn_if_debug_build(ui);
                 },
