@@ -64,27 +64,12 @@ pub fn patch_version(_archive: (ba2::fo4::Archive, ba2::fo4::ArchiveOptions)) {
     //    .build();
 }
 
-pub fn select_archive() {}
+//pub fn select_archive() {}
 
-pub fn select_directory() {}
+//pub fn select_directory() {}
 
 pub fn display(archive: &(ba2::fo4::Archive, ba2::fo4::ArchiveOptions)) {
     // std::println!("name: {:?}", &archive); TODO
     std::println!("version: {:?}", get_version(&archive));
     std::println!("needs patch: {:?}", needs_patch(&archive));
 }
-
-/*
-
-// WRITE
-pub fn example() -> Option<()> {
-    let chunk = Chunk::from_decompressed(b"Hello world!\n");
-    let file: File = [chunk].into_iter().collect();
-    let key: ArchiveKey = b"hello.txt".into();
-    let archive: Archive = [(key, file)].into_iter().collect();
-
-    let mut dst = fs::File::create("example.ba2").ok()?;
-    let options = ArchiveOptions::default();
-    archive.write(&mut dst, &options).ok()?;
-    Some(())
-} */

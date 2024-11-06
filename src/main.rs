@@ -1,9 +1,10 @@
 use ba2::{fo4::Archive, Reader};
 use serde_derive::Deserialize;
-use std::fs;
 use std::path::Path;
+use std::{arch, fs};
 //use std::process::exit;
 use eframe::egui;
+use rfd::FileDialog;
 use toml;
 pub mod avp;
 pub mod avp_data;
@@ -46,46 +47,47 @@ impl eframe::App for AppGUI {
         // Put your widgets into a `SidePanel`, `TopBottomPanel`, `CentralPanel`, `Window` or `Area`.
         // For inspiration and more examples, go to https://emilk.github.io/egui
 
-        egui::TopBottomPanel::top("top_panel").show(ctx, |ui| {
-            // The top panel is often a good place for a menu bar:
-
-            egui::menu::bar(ui, |ui| {
-                // NOTE: no File->Quit on web pages!
+        egui::TopBottomPanel::top("top_panel").show(ctx, |ui: &mut egui::Ui| {
+            egui::menu::bar(ui, |ui: &mut egui::Ui| {
                 let is_web = cfg!(target_arch = "wasm32");
                 if !is_web {
-                    ui.menu_button("File", |ui| {
+                    ui.menu_button("File", |ui: &mut egui::Ui| {
                         if ui.button("Quit").clicked() {
+                            ctx.send_viewport_cmd(egui::ViewportCommand::Close);
+                        }
+                    });
+                    ui.menu_button("About", |ui: &mut egui::Ui| {
+                        if ui.button("Test").clicked() {
                             ctx.send_viewport_cmd(egui::ViewportCommand::Close);
                         }
                     });
                     ui.add_space(16.0);
                 }
-
                 egui::widgets::global_theme_preference_buttons(ui);
             });
         });
 
         egui::CentralPanel::default().show(ctx, |ui| {
             ui.heading("[archive-version-patcher]");
-            ui.horizontal(|ui| {
+            ui.horizontal(|ui: &mut egui::Ui| {
                 ui.label("by bp42s");
             });
 
             ui.separator();
 
-            ui.horizontal(|ui| {
+            ui.horizontal(|ui: &mut egui::Ui| {
                 ui.label("Select an archive to patch:");
             });
             if ui
                 .button(egui::RichText::new("Select Archive").color(egui::Color32::GREEN))
                 .clicked()
             {
-                appgui_button_select_archive()
+                let _ = appgui_button_select_archive();
             }
 
-            ui.add_space(7.5);  // spacer between button selectors
+            ui.add_space(7.5); // spacer between button selectors
 
-            ui.horizontal(|ui| {
+            ui.horizontal(|ui: &mut egui::Ui| {
                 ui.label("Select a directory to patch:");
             });
             if ui
@@ -96,7 +98,7 @@ impl eframe::App for AppGUI {
             }
 
             ui.separator();
-            ui.horizontal(|ui| {
+            ui.horizontal(|ui: &mut egui::Ui| {
                 ui.label("Patching progress:");
             });
 
@@ -125,22 +127,25 @@ impl eframe::App for AppGUI {
     }
 }
 
-// fn appgui_footer(ui: &mut egui::Ui) {
-//     ui.horizontal(|ui| {
-//         ui.spacing_mut().item_spacing.x = 0.0;
-//         ui.label("Powered by ");
-//         ui.hyperlink_to("egui", "https://github.com/emilk/egui");
-//         ui.label(" and ");
-//         ui.hyperlink_to(
-//             "eframe",
-//             "https://www.nexusmods.com/fallout4/mods/89051?tab=files",
-//         );
-//         ui.label(".");
-//     });
-// }
-
-pub fn appgui_button_select_archive() {
+pub fn appgui_button_select_archive() -> Option<()> {
     std::println!("Select Archive button clicked");
+
+    let Some(archive_path) = FileDialog::new()
+        .add_filter("ba2", &["ba2"])
+        .set_directory("/")
+        .pick_file()
+    else {
+        return Some(());
+    };
+
+    //let archive: (ba2::fo4::Archive, ba2::fo4::ArchiveOptions) = Archive::read(archive_path).ok()?;
+    //let path: &Path = Path::new(r"./src/test_archives/fo4_tester.ba2");
+    // let archive: (ba2::fo4::Archive, ba2::fo4::ArchiveOptions) = Archive::read(path).ok()?;
+
+    //let data: std::path::PathBuf = archive_path.unwrap();
+    //std::println!("data: {:#?}", data);
+
+    Some(())
 }
 
 pub fn appgui_button_select_directory() {
@@ -213,3 +218,17 @@ pub fn parse_config() -> avp_data::Language {
         _ => return avp_data::Language::English,
     }
 }
+
+// fn appgui_footer(ui: &mut egui::Ui) {
+//     ui.horizontal(|ui| {
+//         ui.spacing_mut().item_spacing.x = 0.0;
+//         ui.label("Powered by ");
+//         ui.hyperlink_to("egui", "https://github.com/emilk/egui");
+//         ui.label(" and ");
+//         ui.hyperlink_to(
+//             "eframe",
+//             "https://www.nexusmods.com/fallout4/mods/89051?tab=files",
+//         );
+//         ui.label(".");
+//     });
+// }
