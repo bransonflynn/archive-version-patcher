@@ -82,6 +82,9 @@ impl eframe::App for AppGUI {
             {
                 appgui_button_select_archive()
             }
+
+            ui.add_space(7.5);  // spacer between button selectors
+
             ui.horizontal(|ui| {
                 ui.label("Select a directory to patch:");
             });
