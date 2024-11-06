@@ -43,7 +43,7 @@ pub enum Message {
     Default,
 }
 impl Message {
-    pub fn warning_invalid_language(&self, lang: Language) -> String {
+    pub fn warning_invalid_language(&self) -> String {
         // doesnt need a match statement since this is error handling
         return String::from("WARNING! Invalid language set in config/avp_config.toml");
     }
