@@ -17,8 +17,8 @@ pub fn needs_patch(path: &Path) -> bool {
         Version::v1 => return false,
         Version::v7 => return true,
         Version::v8 => return true,
-        Version::v2 => return false, // starfield version, report error
-        Version::v3 => return false, // starfield version, report error
+        Version::v2 => return false, // sf version, report error
+        Version::v3 => return false, // sf version, report error
     }
 }
 
@@ -34,8 +34,8 @@ pub fn patch_version(path: &Path) {
             //options.OptionsBuilder.version(options, );
         }
         Version::v8 => todo!(),
-        Version::v2 => std::println!("invalid ba2"), // starfield version, report error
-        Version::v3 => std::println!("invalid ba2 needed"), // starfield version, report error
+        Version::v2 => std::println!("invalid ba2"), // sf version, report error
+        Version::v3 => std::println!("invalid ba2 needed"), // sf version, report error
     }
 }
 
@@ -48,6 +48,10 @@ pub fn temp_get_version(path: &Path) -> Option<()> {
     let file_name = path.file_name()?.to_str()?;
     std::println!("name: {}, version: {:?}", file_name, options.version());
     return Some(());
+}
+
+pub fn temp_get_version_archive(archive: ba2::fo4::Archive) -> Option<()> {
+
 }
 
 /*
