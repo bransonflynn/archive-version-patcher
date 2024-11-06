@@ -16,3 +16,6 @@ clap = { version = "4.5.20", features = ["derive"] }
 serde = "1.0.214"
 serde_derive = "1.0.214"
 toml = "0.8.19"
+
+[build-dependencies]
+winresource = "0.1.17"

@@ -1,6 +1,6 @@
 #[allow(unused_imports)]
 use ba2::{
-    fo4::{Archive, ArchiveKey, ArchiveOptions, Chunk, File, Version},
+    fo4::{Archive, ArchiveKey, ArchiveOptions, Chunk, CompressionFormat, File, Version},
     prelude::*,
     Reader,
 };
@@ -51,16 +51,17 @@ pub fn patch_version_temp(path: &Path) {
     }
 }
 
-pub fn patch_version(mut archive: (ba2::fo4::Archive, ba2::fo4::ArchiveOptions)) {
+pub fn patch_version(_archive: (ba2::fo4::Archive, ba2::fo4::ArchiveOptions)) {
     //let archive_options: ArchiveOptions = archive.1;
     //let old_version: Version = ba2::fo4::Version::v1;
-    //let options_format = ba2::fo4::FileReadOptions::builder().format(ba2::fo4::Format::DX10).build();
-    //let options_version: ArchiveOptions = ba2::fo4::ArchiveOptions::builder().version(Version::v1).build();
-    let options_new: ArchiveOptions = ba2::fo4::ArchiveOptions::builder()
-        .version(Version::v1)
-        .build();
+    //let options_new: ArchiveOptions = ba2::fo4::ArchiveOptions::builder()
+    //    .version(Version::v1)
+    //    .build();
+    //archive.1 = options_new;
 
-    archive.1 = options_new;
+    //let _ = ba2::fo4::FileWriteOptions::builder()
+    //    .compression_format(ba2::fo4::CompressionFormat::Zip)
+    //    .build();
 }
 
 pub fn select_archive() {}
@@ -75,31 +76,13 @@ pub fn display(archive: &(ba2::fo4::Archive, ba2::fo4::ArchiveOptions)) {
 
 /*
 
-//let builder = ba2::fo4::archive::OptionsBuilder::OptionsBuilder(archive.1);
-    //archive.0.header
-    //let _ = ArchiveOptions::builder()
-    //    .version(Version::v1)
-    //    .build();
-    //let options = ba2::fo4::FileReadOptions::builder().version(ba2::fo4::Version::v1).build();
-
-// READ
-pub fn example() -> Option<()> {
-    let path = Path::new(r"path/to/fallout4/Data/Fallout4 - Interface.ba2");
-    let (archive, meta) = Archive::read(path).ok()?;
-    let key: ArchiveKey = b"Interface/HUDMenu.swf".into();
-    let file = archive.get(&key)?;
-    let mut dst = fs::File::create("HUDMenu.swf").ok()?;
-    let options: FileWriteOptions = meta.into();
-    file.write(&mut dst, &options).ok()?;
-    Some(())
-}
-
 // WRITE
 pub fn example() -> Option<()> {
     let chunk = Chunk::from_decompressed(b"Hello world!\n");
     let file: File = [chunk].into_iter().collect();
     let key: ArchiveKey = b"hello.txt".into();
     let archive: Archive = [(key, file)].into_iter().collect();
+
     let mut dst = fs::File::create("example.ba2").ok()?;
     let options = ArchiveOptions::default();
     archive.write(&mut dst, &options).ok()?;

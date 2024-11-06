@@ -1,5 +1,9 @@
 use ba2::{fo4::Archive, Reader};
+use serde_derive::Deserialize;
+use std::fs;
 use std::path::Path;
+//use std::process::exit;
+use toml;
 pub mod avp;
 pub mod avp_data;
 
@@ -17,10 +21,10 @@ impl CLI {}
 
 fn main() {
     println!("[archive-version-patcher]\n");
-    // setup language
-    // read from config toml for data
-    // setup lang enum with int read from config toml with match statement
-    let _language: avp_data::Language = avp_data::Language::English;
+
+    // parse config options
+    let lang: avp_data::Language = parse_config();
+    let msg: avp_data::Message = avp_data::Message::Default;
 
     //let args = CLI::parse();
     //std::println!("pattern: {:?}, path: {:?}", args.pattern, args.path);
@@ -49,4 +53,38 @@ pub fn main_impl() -> Option<()> {
     std::println!("needs patch: {:?}", avp::needs_patch(&archive));
 
     return Some(());
+}
+
+// Top level struct to hold the TOML data.
+#[derive(Deserialize)]
+struct ConfigData {
+    config: TomlConfig,
+}
+// Config struct holds to data from the `[config]` section.
+#[derive(Deserialize)]
+struct TomlConfig {
+    language: u32,
+}
+
+pub fn parse_config() -> avp_data::Language {
+    let config_toml: &str = "./config/avp_config.toml";
+    let config_contents: String = match fs::read_to_string(config_toml) {
+        Ok(c) => c,
+        Err(_) => {
+            todo!();
+            //exit(1);
+        }
+    };
+    let config_data: ConfigData = match toml::from_str(&config_contents) {
+        Ok(d) => d,
+        Err(_) => {
+            todo!();
+        }
+    };
+
+    match config_data.config.language {
+        0 => return avp_data::Language::English,
+        1 => return avp_data::Language::German,
+        _ => return avp_data::Language::English,
+    }
 }

@@ -3,6 +3,13 @@ pub enum Language {
     German,
 }
 impl Language {
+    pub fn to_string(&self) -> String {
+        match self {
+            Language::English => return String::from("English"),
+            Language::German => return String::from("German"),
+        }
+    }
+
     pub fn patch_success(&self) -> String {
         match self {
             Language::English => return String::from("temp_patch_success"),
@@ -33,18 +40,11 @@ impl Language {
 }
 
 pub enum Message {
-    Error,
-    Notif,
+    Default,
 }
-
-pub enum Error {
-    PatchFail,
-    PatchNotNeeded,
-    InvalidVersion,
-}
-
-pub enum Notif {
-    PatchSuccess,
-    ProcessStarted,
-    ProcessFinished,
+impl Message {
+    pub fn warning_invalid_language(&self, lang: Language) -> String {
+        // doesnt need a match statement since this is error handling
+        return String::from("WARNING! Invalid language set in config/avp_config.toml");
+    }
 }
