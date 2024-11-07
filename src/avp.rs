@@ -70,20 +70,21 @@ pub fn needs_patch_version(vers: ba2::fo4::Version) -> bool {
     }
 }
 
-pub fn patch_version(mut archive: &FalloutArchive) {
+pub fn patch_version(mut _archive: &FalloutArchive) -> Option<()> {
     //let archive_options: ArchiveOptions = archive.1;
     //let old_version: Version = ba2::fo4::Version::v1;
-    let options_new: ba2::fo4::ArchiveOptions = ba2::fo4::ArchiveOptions::builder()
-        .version(ba2::fo4::Version::v1)
-        .build();
+    //let options_new: ba2::fo4::ArchiveOptions = ba2::fo4::ArchiveOptions::builder()
+    //    .version(ba2::fo4::Version::v1)
+    //    .build();
     //archive.1 = options_new;
 
     //let _ = ba2::fo4::FileWriteOptions::builder()
     //    .compression_format(ba2::fo4::CompressionFormat::Zip)
     //    .build();
-    let options_temp: ba2::fo4::ArchiveOptions = archive.options;
+    //let options_temp: ba2::fo4::ArchiveOptions = archive.options;
     //options_temp.version() = ba2::fo4::Version::v1;
     //archive.write()
+    return Some(());
 }
 
 /*
