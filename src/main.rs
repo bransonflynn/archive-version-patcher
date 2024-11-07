@@ -1,10 +1,10 @@
+// imports
 use ba2::{fo4::Archive, Reader};
-use serde_derive::Deserialize;
-use std::path::Path;
-use std::{arch, fs};
-//use std::process::exit;
 use eframe::egui;
 use rfd::FileDialog;
+use serde_derive::Deserialize;
+use std::fs;
+use std::path::Path;
 use toml;
 pub mod avp;
 pub mod avp_data;
@@ -56,8 +56,13 @@ impl eframe::App for AppGUI {
                             ctx.send_viewport_cmd(egui::ViewportCommand::Close);
                         }
                     });
+                    ui.menu_button("Options", |ui: &mut egui::Ui| {
+                        if ui.button("Quit_Temp").clicked() {
+                            ctx.send_viewport_cmd(egui::ViewportCommand::Close);
+                        }
+                    });
                     ui.menu_button("About", |ui: &mut egui::Ui| {
-                        if ui.button("Test").clicked() {
+                        if ui.button("Quit_Temp").clicked() {
                             ctx.send_viewport_cmd(egui::ViewportCommand::Close);
                         }
                     });
@@ -67,7 +72,8 @@ impl eframe::App for AppGUI {
             });
         });
 
-        egui::CentralPanel::default().show(ctx, |ui| {
+        egui::CentralPanel::default().show(ctx, |ui: &mut egui::Ui| {
+            // TITLE SECTION
             ui.heading("[archive-version-patcher]");
             ui.horizontal(|ui: &mut egui::Ui| {
                 ui.label("by bp42s");
@@ -75,6 +81,7 @@ impl eframe::App for AppGUI {
 
             ui.separator();
 
+            // ARCHIVE SELECTION SECTION
             ui.horizontal(|ui: &mut egui::Ui| {
                 ui.label("Select an archive to patch:");
             });
@@ -85,7 +92,7 @@ impl eframe::App for AppGUI {
                 let _ = appgui_button_select_archive();
             }
 
-            ui.add_space(7.5); // spacer between button selectors
+            ui.add_space(7.5); // space between button selectors
 
             ui.horizontal(|ui: &mut egui::Ui| {
                 ui.label("Select a directory to patch:");
@@ -97,13 +104,18 @@ impl eframe::App for AppGUI {
                 appgui_button_select_directory()
             }
 
+            // STATUS SECTION
             ui.separator();
+            ui.horizontal(|ui: &mut egui::Ui| {
+                ui.label("Target archive name: ");
+            });
             ui.horizontal(|ui: &mut egui::Ui| {
                 ui.label("Patching progress:");
             });
 
             ui.separator();
 
+            // FOOTER SECTION
             ui.with_layout(
                 egui::Layout::bottom_up(egui::Align::LEFT),
                 |ui: &mut egui::Ui| {
@@ -130,14 +142,15 @@ impl eframe::App for AppGUI {
 pub fn appgui_button_select_archive() -> Option<()> {
     std::println!("Select Archive button clicked");
 
-    let Some(archive_path) = FileDialog::new()
+    let archive_pathbuf = FileDialog::new()
         .add_filter("ba2", &["ba2"])
         .set_directory("/")
-        .pick_file()
-    else {
-        return Some(());
-    };
+        .pick_file()?;
+    let archive_path: &Path = archive_pathbuf.as_path();
+    let archive_file: (Archive<'_>, ba2::fo4::ArchiveOptions) = Archive::read(archive_path).ok()?;
+    let archive_name: &std::ffi::OsStr = Path::new(&archive_path).file_name().unwrap();
 
+    std::println!("archive_name: {:?}", archive_name);
     //let archive: (ba2::fo4::Archive, ba2::fo4::ArchiveOptions) = Archive::read(archive_path).ok()?;
     //let path: &Path = Path::new(r"./src/test_archives/fo4_tester.ba2");
     // let archive: (ba2::fo4::Archive, ba2::fo4::ArchiveOptions) = Archive::read(path).ok()?;
@@ -145,7 +158,7 @@ pub fn appgui_button_select_archive() -> Option<()> {
     //let data: std::path::PathBuf = archive_path.unwrap();
     //std::println!("data: {:#?}", data);
 
-    Some(())
+    return Some(());
 }
 
 pub fn appgui_button_select_directory() {
@@ -163,7 +176,7 @@ fn main() {
     let _ = eframe::run_native(
         "[archive-version-patcher]",
         native_options,
-        Box::new(|cc| Ok(Box::new(AppGUI::new(cc)))),
+        Box::new(|cc: &eframe::CreationContext<'_>| Ok(Box::new(AppGUI::new(cc)))),
     );
 
     //let args = CLI::parse();
@@ -202,7 +215,6 @@ pub fn parse_config() -> avp_data::Language {
         Ok(c) => c,
         Err(_) => {
             todo!();
-            //exit(1);
         }
     };
     let config_data: ConfigData = match toml::from_str(&config_contents) {

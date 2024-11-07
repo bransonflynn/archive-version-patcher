@@ -1,7 +1,5 @@
-#[allow(unused_imports)]
 use ba2::{
-    fo4::{Archive, ArchiveKey, ArchiveOptions, Chunk, CompressionFormat, File, Version},
-    prelude::*,
+    fo4::{Archive, Version},
     Reader,
 };
 use std::path::Path;

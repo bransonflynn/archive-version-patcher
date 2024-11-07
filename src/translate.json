@@ -7,11 +7,11 @@
         "English": "[archive-version-patcher]",
         "German": "[archivversionspatcher}"
     },
-    "btn_browse": {
+    "btn_select_archive": {
         "English": "Select Archive",
         "German": "Archiv Auswählen"
     },
-    "btn_dir": {
+    "btn_select_directory": {
         "English": "Select Directory",
         "German": "Verzeichnis Auswählen"
     },
@@ -19,51 +19,43 @@
         "English": "Patch",
         "German": "Patchen"
     },
-    "Select archive window": {
-        "English": "Select Archive...",
-        "German": "Archiv Auswählen..."
-    },
-    "Select directory window": {
-        "English": "Select directory containing BA2 files to be patched...",
-        "German": "Verzeichnis mit zu patchenden BA2-Dateien auswählen..."
-    },
-    "Archive selected": {
+    "mesg_selected_archive": {
         "English": "Archive selected: ",
         "German": "Gewähltes Archiv: "
     },
-    "Directory selected": {
+    "mesg_selected_directory": {
         "English": "Directory selected: ",
         "German": "Gewähltes Verzeichnis: "
     },
-    "Patching archive message": {
+    "status_patching_in_progress": {
         "English": "Patching",
         "German": "Patche"
     },
-    "Patching archive complete": {
+    "status_patching_complete_archive": {
         "English": "was successfully patched.",
         "German": "wurde erfolgreich gepatcht."
     },
-    "Files successfully patched": {
+    "status_patching_complete_directory": {
         "English": " files were successfully patched.",
         "German": " Dateien wurden erfolgreich gepatcht."
     },
-    "Permission Error": {
+    "error_permissions": {
         "English": "You lack the permissions to modify ",
         "German": "Keine Berechtigung zum Modifzieren von "
     },
-    "Unexpected version": {
+    "error_archive_version_invalid": {
         "English": " does not have the expected version of either 7 or 8. The file will not be patched.",
         "German": " hat nicht die erwartete Version von 7 oder 8. Diese Datei wird nicht gepatcht."
     },
-    "No patch needed": {
+    "mesg_patch_not_needed": {
         "English": " is already version 1. The file will not be patched.",
         "German": " ist bereits Version 1. Diese Datei wird nicht gepatcht."
     },
-    "Patched archive list": {
+    "mesg_list_patched_archives": {
         "English": "List of patched archives:",
         "German": "Liste der gepatchten Archive:"
     },
-    "No archives patched": {
+    "mesg_no_archives_patched": {
         "English": " did not contain any archives that required patching.",
         "German": " enthielt keine Archive, die gepatcht werden müssen."
     }
