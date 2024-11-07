@@ -93,7 +93,7 @@ impl eframe::App for AppGUI {
                 .button(egui::RichText::new("Select Directory").color(egui::Color32::GREEN))
                 .clicked()
             {
-                avp::appgui_button_select_directory()
+                avp::appgui_button_select_directory();
             }
 
             // section: status/target/run
