@@ -3,9 +3,8 @@ use ba2::{fo4::Archive, Reader};
 use eframe::egui;
 use rfd::FileDialog;
 use serde_derive::Deserialize;
-use std::fs;
 use std::path::Path;
-use toml;
+// modules
 pub mod avp;
 pub mod avp_data;
 
@@ -24,8 +23,8 @@ struct TomlConfig {
 #[serde(default)]
 struct AppGUI {
     name: String,
-    #[serde(skip)] // This how you opt-out of serialization of a field
-    version: (u32, u32, u32),
+    #[serde(skip)] // opt-out of serialization of this field
+    version: (u32, u32, u32), // semver2.0
 }
 impl AppGUI {
     fn new(_cc: &eframe::CreationContext<'_>) -> Self {
@@ -42,38 +41,36 @@ impl Default for AppGUI {
 }
 
 impl eframe::App for AppGUI {
-    /// Called each time the UI needs repainting, which may be many times per second.
     fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
         // Put your widgets into a `SidePanel`, `TopBottomPanel`, `CentralPanel`, `Window` or `Area`.
         // For inspiration and more examples, go to https://emilk.github.io/egui
 
+        // top panel with options
         egui::TopBottomPanel::top("top_panel").show(ctx, |ui: &mut egui::Ui| {
             egui::menu::bar(ui, |ui: &mut egui::Ui| {
-                let is_web = cfg!(target_arch = "wasm32");
-                if !is_web {
-                    ui.menu_button("File", |ui: &mut egui::Ui| {
-                        if ui.button("Quit").clicked() {
-                            ctx.send_viewport_cmd(egui::ViewportCommand::Close);
-                        }
-                    });
-                    ui.menu_button("Options", |ui: &mut egui::Ui| {
-                        if ui.button("Quit_Temp").clicked() {
-                            ctx.send_viewport_cmd(egui::ViewportCommand::Close);
-                        }
-                    });
-                    ui.menu_button("About", |ui: &mut egui::Ui| {
-                        if ui.button("Quit_Temp").clicked() {
-                            ctx.send_viewport_cmd(egui::ViewportCommand::Close);
-                        }
-                    });
-                    ui.add_space(16.0);
-                }
+                ui.menu_button("File", |ui: &mut egui::Ui| {
+                    if ui.button("Quit").clicked() {
+                        ctx.send_viewport_cmd(egui::ViewportCommand::Close);
+                    }
+                });
+                ui.menu_button("Options", |ui: &mut egui::Ui| {
+                    if ui.button("Quit_Temp").clicked() {
+                        ctx.send_viewport_cmd(egui::ViewportCommand::Close);
+                    }
+                });
+                ui.menu_button("About", |ui: &mut egui::Ui| {
+                    if ui.button("Quit_Temp").clicked() {
+                        ctx.send_viewport_cmd(egui::ViewportCommand::Close);
+                    }
+                });
+                ui.add_space(16.0);
                 egui::widgets::global_theme_preference_buttons(ui);
             });
         });
 
+        // body of the gui
         egui::CentralPanel::default().show(ctx, |ui: &mut egui::Ui| {
-            // TITLE SECTION
+            // section: title
             ui.heading("[archive-version-patcher]");
             ui.horizontal(|ui: &mut egui::Ui| {
                 ui.label("by bp42s");
@@ -81,7 +78,7 @@ impl eframe::App for AppGUI {
 
             ui.separator();
 
-            // ARCHIVE SELECTION SECTION
+            // section: archive selection
             ui.horizontal(|ui: &mut egui::Ui| {
                 ui.label("Select an archive to patch:");
             });
@@ -104,7 +101,7 @@ impl eframe::App for AppGUI {
                 appgui_button_select_directory()
             }
 
-            // STATUS SECTION
+            // section: status/target/run
             ui.separator();
             ui.horizontal(|ui: &mut egui::Ui| {
                 ui.label("Target archive name: ");
@@ -115,7 +112,7 @@ impl eframe::App for AppGUI {
 
             ui.separator();
 
-            // FOOTER SECTION
+            // section: footer
             ui.with_layout(
                 egui::Layout::bottom_up(egui::Align::LEFT),
                 |ui: &mut egui::Ui| {
@@ -142,12 +139,13 @@ impl eframe::App for AppGUI {
 pub fn appgui_button_select_archive() -> Option<()> {
     std::println!("Select Archive button clicked");
 
-    let archive_pathbuf = FileDialog::new()
+    let archive_pathbuf: std::path::PathBuf = FileDialog::new()
         .add_filter("ba2", &["ba2"])
         .set_directory("/")
         .pick_file()?;
     let archive_path: &Path = archive_pathbuf.as_path();
-    let archive_file: (Archive<'_>, ba2::fo4::ArchiveOptions) = Archive::read(archive_path).ok()?;
+    let _archive_file: (Archive<'_>, ba2::fo4::ArchiveOptions) =
+        Archive::read(archive_path).ok()?;
     let archive_name: &std::ffi::OsStr = Path::new(&archive_path).file_name().unwrap();
 
     std::println!("archive_name: {:?}", archive_name);
@@ -170,7 +168,6 @@ fn main() {
 
     // parse config options
     let _lang: avp_data::Language = parse_config();
-    let _msg: avp_data::Message = avp_data::Message::Default;
 
     let native_options: eframe::NativeOptions = eframe::NativeOptions::default();
     let _ = eframe::run_native(
@@ -210,18 +207,14 @@ pub fn main_impl() -> Option<()> {
 }
 
 pub fn parse_config() -> avp_data::Language {
-    let config_toml: &str = "./config/avp_config.toml";
-    let config_contents: String = match fs::read_to_string(config_toml) {
+    let config_toml: &str = "avp_config.toml";
+    let config_contents: String = match std::fs::read_to_string(config_toml) {
         Ok(c) => c,
-        Err(_) => {
-            todo!();
-        }
+        Err(_) => todo!(),
     };
     let config_data: ConfigData = match toml::from_str(&config_contents) {
         Ok(d) => d,
-        Err(_) => {
-            todo!();
-        }
+        Err(_) => todo!(),
     };
 
     match config_data.config.language {

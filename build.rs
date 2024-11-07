@@ -1,3 +1,5 @@
+// implements the icon for the .exe
+
 use {
     std::{env, io},
     winresource::WindowsResource,
