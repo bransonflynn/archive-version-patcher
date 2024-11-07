@@ -4,9 +4,17 @@ use ba2::{
 };
 use std::path::Path;
 
-// maybe use tauri_api to prompt for file/dir select
-// https://github.com/tauri-apps/tauri/discussions/3275
-// https://docs.rs/tauri-api/latest/tauri_api/index.html
+pub struct FalloutArchive<'a> {
+    pub archive: ba2::fo4::Archive<'a>,
+    pub options: ba2::fo4::ArchiveOptions,
+}
+
+pub fn tuple_to_struct<'a>(archive_tuple: &'a (ba2::fo4::Archive<'a>, ba2::fo4::ArchiveOptions)) -> FalloutArchive<'a> {
+    return FalloutArchive {
+        archive: archive_tuple.0.clone(),
+        options: archive_tuple.1,
+    }
+}
 
 pub fn get_version(archive: &(ba2::fo4::Archive, ba2::fo4::ArchiveOptions)) -> ba2::fo4::Version {
     return archive.1.version();
@@ -62,12 +70,31 @@ pub fn patch_version(_archive: (ba2::fo4::Archive, ba2::fo4::ArchiveOptions)) {
     //    .build();
 }
 
-//pub fn select_archive() {}
+pub fn appgui_button_select_archive() -> Option<()> {
+    std::println!("Select Archive button clicked"); // temp
 
-//pub fn select_directory() {}
+    let archive_pathbuf: std::path::PathBuf = rfd::FileDialog::new()
+        .add_filter("ba2", &["ba2"])
+        .set_directory("/")
+        .pick_file()?;
+    let archive_path: &Path = archive_pathbuf.as_path();
+    let archive_file: (Archive<'_>, ba2::fo4::ArchiveOptions) = Archive::read(archive_path).ok()?;
+    let archive_name: &std::ffi::OsStr = Path::new(&archive_path).file_name().unwrap();
 
-pub fn display(archive: &(ba2::fo4::Archive, ba2::fo4::ArchiveOptions)) {
+    // temp
+    std::println!("archive_name: {:?}", archive_name);
+    std::println!("archive_version: {:#?}", get_version(&archive_file));
+
+    return Some(());
+}
+
+pub fn appgui_button_select_directory() {
+    std::println!("Select Directory button clicked"); // temp
+}
+
+pub fn to_string(archive: &(ba2::fo4::Archive, ba2::fo4::ArchiveOptions)) {
     // std::println!("name: {:?}", &archive); TODO
     std::println!("version: {:?}", get_version(&archive));
     std::println!("needs patch: {:?}", needs_patch(&archive));
+
 }

@@ -24,7 +24,7 @@ struct TomlConfig {
 struct AppGUI {
     name: String,
     #[serde(skip)] // opt-out of serialization of this field
-    version: (u32, u32, u32), // semver2.0
+    version: (u32, u32, u32), // semver 2.0.0
 }
 impl AppGUI {
     fn new(_cc: &eframe::CreationContext<'_>) -> Self {
@@ -48,7 +48,7 @@ impl eframe::App for AppGUI {
         // top panel with options
         egui::TopBottomPanel::top("top_panel").show(ctx, |ui: &mut egui::Ui| {
             egui::menu::bar(ui, |ui: &mut egui::Ui| {
-                ui.menu_button("File", |ui: &mut egui::Ui| {
+                ui.menu_button("Program", |ui: &mut egui::Ui| {
                     if ui.button("Quit").clicked() {
                         ctx.send_viewport_cmd(egui::ViewportCommand::Close);
                     }
@@ -86,7 +86,7 @@ impl eframe::App for AppGUI {
                 .button(egui::RichText::new("Select Archive").color(egui::Color32::GREEN))
                 .clicked()
             {
-                let _ = appgui_button_select_archive();
+                let _ = avp::appgui_button_select_archive();
             }
 
             ui.add_space(7.5); // space between button selectors
@@ -98,7 +98,7 @@ impl eframe::App for AppGUI {
                 .button(egui::RichText::new("Select Directory").color(egui::Color32::GREEN))
                 .clicked()
             {
-                appgui_button_select_directory()
+                avp::appgui_button_select_directory()
             }
 
             // section: status/target/run
@@ -136,33 +136,6 @@ impl eframe::App for AppGUI {
     }
 }
 
-pub fn appgui_button_select_archive() -> Option<()> {
-    std::println!("Select Archive button clicked");
-
-    let archive_pathbuf: std::path::PathBuf = FileDialog::new()
-        .add_filter("ba2", &["ba2"])
-        .set_directory("/")
-        .pick_file()?;
-    let archive_path: &Path = archive_pathbuf.as_path();
-    let _archive_file: (Archive<'_>, ba2::fo4::ArchiveOptions) =
-        Archive::read(archive_path).ok()?;
-    let archive_name: &std::ffi::OsStr = Path::new(&archive_path).file_name().unwrap();
-
-    std::println!("archive_name: {:?}", archive_name);
-    //let archive: (ba2::fo4::Archive, ba2::fo4::ArchiveOptions) = Archive::read(archive_path).ok()?;
-    //let path: &Path = Path::new(r"./src/test_archives/fo4_tester.ba2");
-    // let archive: (ba2::fo4::Archive, ba2::fo4::ArchiveOptions) = Archive::read(path).ok()?;
-
-    //let data: std::path::PathBuf = archive_path.unwrap();
-    //std::println!("data: {:#?}", data);
-
-    return Some(());
-}
-
-pub fn appgui_button_select_directory() {
-    std::println!("Select Directory button clicked");
-}
-
 fn main() {
     println!("[archive-version-patcher]\n");
 
@@ -192,7 +165,7 @@ pub fn main_impl() -> Option<()> {
     std::println!("needs patch: {:?}", avp::needs_patch(&archive));
 
     std::println!("\n");
-    avp::display(&archive);
+    avp::to_string(&archive);
 
     std::println!("\n");
     avp::patch_version(archive);
