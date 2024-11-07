@@ -57,35 +57,47 @@ pub fn get_version_string(archive: &FalloutArchive) -> String {
 pub fn needs_patch_archive(archive: &FalloutArchive) -> bool {
     match archive.options.version() {
         ba2::fo4::Version::v1 => return false,
-        ba2::fo4::Version::v7 => return true,
-        ba2::fo4::Version::v8 => return true,
-        ba2::fo4::Version::v2 => return false, // sf version, report error
-        ba2::fo4::Version::v3 => return false, // sf version, report error
+        ba2::fo4::Version::v7 | ba2::fo4::Version::v8 => return true,
+        ba2::fo4::Version::v2 | ba2::fo4::Version::v3 => return false, // sf version, report error
     }
 }
 
 pub fn needs_patch_version(vers: ba2::fo4::Version) -> bool {
     match vers {
         ba2::fo4::Version::v1 => return false,
-        ba2::fo4::Version::v7 => return true,
-        ba2::fo4::Version::v8 => return true,
-        ba2::fo4::Version::v2 => return false, // sf version, report error
-        ba2::fo4::Version::v3 => return false, // sf version, report error
+        ba2::fo4::Version::v7 | ba2::fo4::Version::v8 => return true,
+        ba2::fo4::Version::v2 | ba2::fo4::Version::v3 => return false, // sf version, report error
     }
 }
 
-pub fn patch_version(_archive: &FalloutArchive) {
+pub fn patch_version(mut archive: &FalloutArchive) {
     //let archive_options: ArchiveOptions = archive.1;
     //let old_version: Version = ba2::fo4::Version::v1;
-    //let options_new: ArchiveOptions = ba2::fo4::ArchiveOptions::builder()
-    //    .version(Version::v1)
-    //    .build();
+    let options_new: ba2::fo4::ArchiveOptions = ba2::fo4::ArchiveOptions::builder()
+        .version(ba2::fo4::Version::v1)
+        .build();
     //archive.1 = options_new;
 
     //let _ = ba2::fo4::FileWriteOptions::builder()
     //    .compression_format(ba2::fo4::CompressionFormat::Zip)
     //    .build();
+    let options_temp: ba2::fo4::ArchiveOptions = archive.options;
+    //options_temp.version() = ba2::fo4::Version::v1;
+    //archive.write()
 }
+
+/*
+fn example() -> Option<()> {
+    let chunk = Chunk::from_decompressed(b"Hello world!\n");
+    let file: File = [chunk].into_iter().collect();
+    let key: ArchiveKey = b"hello.txt".into();
+    let archive: Archive = [(key, file)].into_iter().collect();
+    let mut dst = fs::File::create("example.ba2").ok()?;
+    let options = ArchiveOptions::default();
+    archive.write(&mut dst, &options).ok()?;
+    Some(())
+}
+*/
 
 pub fn appgui_button_select_archive() -> Option<()> {
     std::println!("Select Archive button clicked"); // temp
