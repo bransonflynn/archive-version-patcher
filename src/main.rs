@@ -1,18 +1,7 @@
 // modules
 pub mod avp;
+pub mod avp_config;
 pub mod avp_data;
-
-// // Top level struct to hold the TOML data.
-//use serde_derive::Deserialize;
-// #[derive(Deserialize)]
-// struct ConfigData {
-//     config: TomlConfig,
-// }
-// // Config struct holds to data from the `[config]` section.
-// #[derive(Deserialize)]
-// struct TomlConfig {
-//     language: u32,
-// }
 
 #[derive(serde::Deserialize, serde::Serialize)]
 #[serde(default)]
@@ -20,6 +9,7 @@ struct AppGUI {
     name: String,
     #[serde(skip)] // opt-out of serialization of this field
     version: (u32, u32, u32), // semver 2.0.0
+    selected_archive_name: String,
 }
 impl AppGUI {
     fn new(_cc: &eframe::CreationContext<'_>) -> Self {
@@ -31,6 +21,7 @@ impl Default for AppGUI {
         Self {
             name: String::from("[archive-version-patcher]"),
             version: (0, 1, 0),
+            selected_archive_name: String::from("None"),
         }
     }
 }
@@ -99,7 +90,7 @@ impl eframe::App for AppGUI {
             // section: status/target/run
             ui.separator();
             ui.horizontal(|ui: &mut egui::Ui| {
-                ui.label("Target archive name: ");
+                ui.label("Target archive name: ".to_owned() + &self.selected_archive_name);
             });
             ui.horizontal(|ui: &mut egui::Ui| {
                 ui.label("Patching progress:");

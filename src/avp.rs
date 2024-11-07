@@ -111,7 +111,7 @@ pub fn appgui_button_select_archive() -> Option<()> {
     let archive_tuple: (ba2::fo4::Archive<'_>, ba2::fo4::ArchiveOptions) =
         ba2::fo4::Archive::read(archive_path).ok()?;
     let archive_file: FalloutArchive<'_> = create_archive_struct(&archive_tuple, &archive_path);
-    let _archive_name: &std::ffi::OsStr = std::path::Path::new(&archive_path).file_name().unwrap();
+    let archive_name: &std::ffi::OsStr = std::path::Path::new(&archive_path).file_name().unwrap();
     //return Some(archive_file);
 
     // temp
