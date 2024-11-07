@@ -1,23 +1,18 @@
-// imports
-use ba2::{fo4::Archive, Reader};
-use eframe::egui;
-use rfd::FileDialog;
-use serde_derive::Deserialize;
-use std::path::Path;
 // modules
 pub mod avp;
 pub mod avp_data;
 
-// Top level struct to hold the TOML data.
-#[derive(Deserialize)]
-struct ConfigData {
-    config: TomlConfig,
-}
-// Config struct holds to data from the `[config]` section.
-#[derive(Deserialize)]
-struct TomlConfig {
-    language: u32,
-}
+// // Top level struct to hold the TOML data.
+//use serde_derive::Deserialize;
+// #[derive(Deserialize)]
+// struct ConfigData {
+//     config: TomlConfig,
+// }
+// // Config struct holds to data from the `[config]` section.
+// #[derive(Deserialize)]
+// struct TomlConfig {
+//     language: u32,
+// }
 
 #[derive(serde::Deserialize, serde::Serialize)]
 #[serde(default)]
@@ -140,7 +135,7 @@ fn main() {
     println!("[archive-version-patcher]\n");
 
     // parse config options
-    let _lang: avp_data::Language = parse_config();
+    //let config_options = avp::parse_config();
 
     let native_options: eframe::NativeOptions = eframe::NativeOptions::default();
     let _ = eframe::run_native(
@@ -153,48 +148,6 @@ fn main() {
     //std::println!("pattern: {:?}, path: {:?}", args.pattern, args.path);
 
     //main_impl();
-}
-
-#[allow(dead_code)]
-pub fn main_impl() -> Option<()> {
-    let path: &Path = Path::new(r"./src/test_archives/fo4_tester.ba2");
-    let archive: (ba2::fo4::Archive, ba2::fo4::ArchiveOptions) = Archive::read(path).ok()?;
-
-    std::println!("name: {:?}", path.file_name().unwrap());
-    std::println!("version: {:?}", avp::get_version(&archive));
-    std::println!("needs patch: {:?}", avp::needs_patch(&archive));
-
-    std::println!("\n");
-    avp::to_string(&archive);
-
-    std::println!("\n");
-    avp::patch_version(archive);
-
-    let path: &Path = Path::new(r"./src/test_archives/fo4_tester.ba2");
-    let archive: (ba2::fo4::Archive, ba2::fo4::ArchiveOptions) = Archive::read(path).ok()?;
-    std::println!("name: {:?}", path.file_name().unwrap());
-    std::println!("version: {:?}", avp::get_version(&archive));
-    std::println!("needs patch: {:?}", avp::needs_patch(&archive));
-
-    return Some(());
-}
-
-pub fn parse_config() -> avp_data::Language {
-    let config_toml: &str = "avp_config.toml";
-    let config_contents: String = match std::fs::read_to_string(config_toml) {
-        Ok(c) => c,
-        Err(_) => todo!(),
-    };
-    let config_data: ConfigData = match toml::from_str(&config_contents) {
-        Ok(d) => d,
-        Err(_) => todo!(),
-    };
-
-    match config_data.config.language {
-        0 => return avp_data::Language::English,
-        1 => return avp_data::Language::German,
-        _ => return avp_data::Language::English,
-    }
 }
 
 // fn appgui_footer(ui: &mut egui::Ui) {

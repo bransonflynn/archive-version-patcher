@@ -3,7 +3,7 @@
         "English",
         "German"
     ],
-    "title": {
+    "ui_title": {
         "English": "[archive-version-patcher]",
         "German": "[archivversionspatcher}"
     },
