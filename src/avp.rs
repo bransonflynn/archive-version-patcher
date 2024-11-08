@@ -137,14 +137,14 @@ pub fn appgui_button_select_archive() -> Option<FalloutArchive<'static>> {
     Some(archive_file)
 }
 
-pub fn appgui_button_select_directory() -> Option<std::path::PathBuf> {
+pub fn appgui_button_select_dir() -> Option<std::path::PathBuf> {
     let dir_path_buf: std::path::PathBuf =
         rfd::FileDialog::new().set_directory("/").pick_folder()?;
 
     return Some(dir_path_buf);
 }
 
-pub fn count_archives_in_directory(dir: std::path::PathBuf) -> u64 {
+pub fn count_archives_in_dir(dir: std::path::PathBuf) -> u64 {
     let mut total: u64 = 0;
     let extension: Option<&std::ffi::OsStr> = Some(std::ffi::OsStr::new("ba2"));
     for file in walkdir::WalkDir::new(dir)
