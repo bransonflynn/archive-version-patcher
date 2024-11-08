@@ -26,7 +26,7 @@ impl Default for AppGUI {
             version: (0, 1, 0),
             selected_archive_name: String::from("Not specified"),
             selected_archive_path: Default::default(),
-            selected_directory_path: Default::default(),
+            selected_directory_path: String::from("Not specified").into(),
             selected_directory_archive_count: 0,
         }
     }
@@ -40,20 +40,18 @@ impl eframe::App for AppGUI {
         // top panel with options
         egui::TopBottomPanel::top("top_panel").show(ctx, |ui: &mut egui::Ui| {
             egui::menu::bar(ui, |ui: &mut egui::Ui| {
-                ui.menu_button("Program", |ui: &mut egui::Ui| {
-                    if ui.button("Quit").clicked() {
-                        ctx.send_viewport_cmd(egui::ViewportCommand::Close);
-                    }
+                ui.menu_button("File", |_ui: &mut egui::Ui| {
+                    // todo maybe: add open archive here
+                    // todo maybe: add open dir here
                 });
-                ui.menu_button("Options", |ui: &mut egui::Ui| {
-                    if ui.button("Quit_Temp").clicked() {
-                        ctx.send_viewport_cmd(egui::ViewportCommand::Close);
-                    }
+                ui.menu_button("Options", |_ui: &mut egui::Ui| {
+                    //
                 });
-                ui.menu_button("About", |ui: &mut egui::Ui| {
-                    if ui.button("Quit_Temp").clicked() {
-                        ctx.send_viewport_cmd(egui::ViewportCommand::Close);
-                    }
+                ui.menu_button("About", |_ui: &mut egui::Ui| {
+                    //
+                });
+                ui.menu_button("Quit", |_ui: &mut egui::Ui| {
+                    ctx.send_viewport_cmd(egui::ViewportCommand::Close);
                 });
                 ui.add_space(16.0);
                 egui::widgets::global_theme_preference_buttons(ui);
@@ -106,7 +104,7 @@ impl eframe::App for AppGUI {
             });
             ui.horizontal(|ui: &mut egui::Ui| {
                 ui.label(
-                    "Target Directory Archive Count: ".to_owned()
+                    "Archive Count: ".to_owned()
                         + &self.selected_directory_archive_count.to_string(),
                 );
             });

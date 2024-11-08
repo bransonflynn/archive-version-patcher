@@ -193,6 +193,7 @@ dependencies = [
  "serde_derive",
  "serde_json",
  "toml 0.8.19",
+ "walkdir",
  "winresource",
 ]
 

@@ -1,3 +1,4 @@
+extern crate walkdir;
 use ba2::Reader;
 
 #[derive(Clone)]
@@ -144,8 +145,24 @@ pub fn appgui_button_select_directory() -> Option<std::path::PathBuf> {
 }
 
 pub fn count_archives_in_directory(dir: std::path::PathBuf) -> u64 {
-    return 0;
+    let mut total: u64 = 0;
+    let extension: Option<&std::ffi::OsStr> = Some(std::ffi::OsStr::new("ba2"));
+    for file in walkdir::WalkDir::new(dir)
+        .into_iter()
+        .filter_map(|file: Result<walkdir::DirEntry, walkdir::Error>| file.ok())
+    {
+        if file.metadata().unwrap().is_file() {
+            if file.path().extension() == extension {
+                total += 1;
+            }
+        }
+    }
+    return total;
 }
+/*
+extern crate walkdir;
+use walkdir::WalkDir;
+*/
 
 pub fn to_string(archive: &FalloutArchive) {
     // TODO should be added as a default/proper impl in the struct
