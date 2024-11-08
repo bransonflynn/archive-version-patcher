@@ -11,6 +11,7 @@ struct AppGUI {
     version: (u32, u32, u32), // semver 2.0.0
     selected_archive_name: String,
     selected_directory_name: String,
+    selected_archive_path: std::path::PathBuf,
 }
 impl AppGUI {
     fn new(_cc: &eframe::CreationContext<'_>) -> Self {
@@ -24,6 +25,7 @@ impl Default for AppGUI {
             version: (0, 1, 0),
             selected_archive_name: String::from("Not specified"),
             selected_directory_name: String::from("Not specified"),
+            selected_archive_path: Default::default(),
         }
     }
 }

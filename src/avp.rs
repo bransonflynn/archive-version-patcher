@@ -1,10 +1,16 @@
 use ba2::Reader;
 
-#[derive(Clone, Default)]
+#[derive(Clone)]
 pub struct FalloutArchive<'a> {
     pub archive: ba2::fo4::Archive<'a>,
     pub options: ba2::fo4::ArchiveOptions,
     pub path_buf: std::path::PathBuf,
+}
+
+impl<'a> Default for FalloutArchive<'a> {
+    fn default() -> Self {
+        Self { archive: Default::default(), options: Default::default(), path_buf: Default::default() }
+    }
 }
 impl<'a> FalloutArchive<'a> {}
 
