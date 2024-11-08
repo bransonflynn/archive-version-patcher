@@ -12,6 +12,7 @@ struct AppGUI {
     selected_archive_name: String,
     selected_archive_path: std::path::PathBuf,
     selected_directory_path: std::path::PathBuf,
+    selected_directory_archive_count: u64,
 }
 impl AppGUI {
     fn new(_cc: &eframe::CreationContext<'_>) -> Self {
@@ -26,6 +27,7 @@ impl Default for AppGUI {
             selected_archive_name: String::from("Not specified"),
             selected_archive_path: Default::default(),
             selected_directory_path: Default::default(),
+            selected_directory_archive_count: 0,
         }
     }
 }
@@ -70,7 +72,7 @@ impl eframe::App for AppGUI {
 
             // section: archive selection
             ui.horizontal(|ui: &mut egui::Ui| {
-                ui.label("Target archive: ".to_owned() + &self.selected_archive_name);
+                ui.label("Target Archive: ".to_owned() + &self.selected_archive_name);
             });
             if ui
                 .button(egui::RichText::new("Select Archive").color(egui::Color32::ORANGE))
@@ -89,11 +91,11 @@ impl eframe::App for AppGUI {
                 }
             }
 
-            ui.add_space(7.5); // space between button selectors
+            ui.add_space(12.5); // space between button selectors
 
             ui.horizontal(|ui: &mut egui::Ui| {
                 ui.label(
-                    "Target directory: ".to_owned()
+                    "Target Directory: ".to_owned()
                         + &self
                             .selected_directory_path
                             .clone()
@@ -102,18 +104,27 @@ impl eframe::App for AppGUI {
                             .unwrap(),
                 );
             });
+            ui.horizontal(|ui: &mut egui::Ui| {
+                ui.label(
+                    "Target Directory Archive Count: ".to_owned()
+                        + &self.selected_directory_archive_count.to_string(),
+                );
+            });
             if ui
                 .button(egui::RichText::new("Select Directory").color(egui::Color32::ORANGE))
                 .clicked()
             {
                 std::println!("Select Directory button clicked"); // temp
-                let selected_dir: Option<std::path::PathBuf> = avp::appgui_button_select_directory();
+                let selected_dir: Option<std::path::PathBuf> =
+                    avp::appgui_button_select_directory();
                 match selected_dir {
                     Some(dir) => {
                         std::println!("some: main_appgui_button_select_directory");
                         std::println!("dir: {:?}", dir);
-                        self.selected_directory_path = dir;
+                        self.selected_directory_path = dir.clone();
                         //
+                        self.selected_directory_archive_count =
+                            avp::count_archives_in_directory(dir);
                     }
                     None => std::println!("error: main_appgui_button_select_directory"),
                 }

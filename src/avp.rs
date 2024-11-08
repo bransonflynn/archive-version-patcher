@@ -127,17 +127,11 @@ pub fn appgui_button_select_archive() -> Option<FalloutArchive<'static>> {
         .add_filter("ba2", &["ba2"])
         .set_directory("/")
         .pick_file()?;
+
     let archive_path: &std::path::Path = archive_path_buf.as_path();
     let archive_tuple: (ba2::fo4::Archive<'_>, ba2::fo4::ArchiveOptions) =
         ba2::fo4::Archive::read(archive_path).ok()?;
     let archive_file: FalloutArchive<'_> = create_archive_struct(archive_tuple, &archive_path);
-    let archive_name: &std::ffi::OsStr = std::path::Path::new(&archive_path).file_name().unwrap();
-    //return Some(archive_file);
-
-    // temp
-    //std::println!("archive_name: {:?}", archive_name);
-    //std::println!("archive_version: {:#?}", get_version(&archive_file));
-    //parse_archive(&archive_file);
 
     Some(archive_file)
 }
@@ -145,13 +139,16 @@ pub fn appgui_button_select_archive() -> Option<FalloutArchive<'static>> {
 pub fn appgui_button_select_directory() -> Option<std::path::PathBuf> {
     let dir_path_buf: std::path::PathBuf =
         rfd::FileDialog::new().set_directory("/").pick_folder()?;
-    //let dir_path: &std::path::Path = dir_path_buf.as_path();
-    std::println!("dir_path: {:?}", &dir_path_buf.as_path());
 
     return Some(dir_path_buf);
 }
 
+pub fn count_archives_in_directory(dir: std::path::PathBuf) -> u64 {
+    return 0;
+}
+
 pub fn to_string(archive: &FalloutArchive) {
+    // TODO should be added as a default/proper impl in the struct
     // std::println!("name: {:?}", &archive); TODO
     std::println!("version: {:?}", get_version(&archive));
     std::println!("needs patch: {:?}", needs_patch_archive(&archive));
