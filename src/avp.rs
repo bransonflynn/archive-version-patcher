@@ -2,26 +2,25 @@ use ba2::Reader;
 
 #[derive(Clone, Default)]
 pub struct FalloutArchive<'a> {
-    pub name: String,
     pub archive: ba2::fo4::Archive<'a>,
     pub options: ba2::fo4::ArchiveOptions,
+    pub path_buf: std::path::PathBuf,
 }
 impl<'a> FalloutArchive<'a> {}
 
 // converts ba2 crate archive tuples into structs for easier handling and passing
 pub fn create_archive_struct<'a>(
-    archive_tuple: &'a (ba2::fo4::Archive<'a>, ba2::fo4::ArchiveOptions),
+    archive_tuple: (ba2::fo4::Archive<'a>, ba2::fo4::ArchiveOptions),
     archive_path: &std::path::Path,
 ) -> FalloutArchive<'a> {
-    let file_name: String = get_archive_name_path(archive_path);
     return FalloutArchive {
-        name: file_name,
         archive: archive_tuple.0.clone(),
         options: archive_tuple.1,
+        path_buf: archive_path.to_path_buf(),
     };
 }
 
-pub fn get_archive_name_path(archive_path: &std::path::Path) -> String {
+pub fn get_archive_name_path(archive_path: &std::path::PathBuf) -> String {
     // christ almighty
     let file_name: Option<String> = archive_path
         .file_name()
@@ -35,7 +34,10 @@ pub fn get_archive_name_path(archive_path: &std::path::Path) -> String {
 }
 
 pub fn parse_archive(archive: &FalloutArchive) {
-    std::println!("parsing archive: {}", archive.name);
+    std::println!(
+        "parsing archive: {}",
+        get_archive_name_path(&archive.path_buf)
+    );
     std::println!("version: {:#?}", get_version(&archive));
     std::println!("needs patch: {:#?}", needs_patch_archive(&archive));
 }
@@ -49,8 +51,18 @@ pub fn get_version_string(archive: &FalloutArchive) -> String {
         ba2::fo4::Version::v1 => return String::from("v1"),
         ba2::fo4::Version::v7 => return String::from("v7"),
         ba2::fo4::Version::v8 => return String::from("v8"),
-        ba2::fo4::Version::v2 => return String::from("v2"), // sf version, report error
-        ba2::fo4::Version::v3 => return String::from("v3"), // sf version, report error
+        ba2::fo4::Version::v2 => return String::from("v2"),
+        ba2::fo4::Version::v3 => return String::from("v3"),
+    }
+}
+
+pub fn version_to_string(vers: ba2::fo4::Version) -> String {
+    match vers {
+        ba2::fo4::Version::v1 => return String::from("v1"),
+        ba2::fo4::Version::v7 => return String::from("v7"),
+        ba2::fo4::Version::v8 => return String::from("v8"),
+        ba2::fo4::Version::v2 => return String::from("v2"),
+        ba2::fo4::Version::v3 => return String::from("v3"),
     }
 }
 
@@ -100,9 +112,7 @@ fn example() -> Option<()> {
 }
 */
 
-pub fn appgui_button_select_archive() -> Option<()> {
-    std::println!("Select Archive button clicked"); // temp
-
+pub fn appgui_button_select_archive() -> Option<FalloutArchive<'static>> {
     let archive_path_buf: std::path::PathBuf = rfd::FileDialog::new()
         .add_filter("ba2", &["ba2"])
         .set_directory("/")
@@ -110,27 +120,25 @@ pub fn appgui_button_select_archive() -> Option<()> {
     let archive_path: &std::path::Path = archive_path_buf.as_path();
     let archive_tuple: (ba2::fo4::Archive<'_>, ba2::fo4::ArchiveOptions) =
         ba2::fo4::Archive::read(archive_path).ok()?;
-    let archive_file: FalloutArchive<'_> = create_archive_struct(&archive_tuple, &archive_path);
+    let archive_file: FalloutArchive<'_> = create_archive_struct(archive_tuple, &archive_path);
     let archive_name: &std::ffi::OsStr = std::path::Path::new(&archive_path).file_name().unwrap();
     //return Some(archive_file);
 
     // temp
     //std::println!("archive_name: {:?}", archive_name);
     //std::println!("archive_version: {:#?}", get_version(&archive_file));
-    parse_archive(&archive_file);
+    //parse_archive(&archive_file);
 
-    return Some(());
+    Some(archive_file)
 }
 
-pub fn appgui_button_select_directory() -> Option<()> {
-    std::println!("Select Directory button clicked"); // temp
-
+pub fn appgui_button_select_directory() -> Option<std::path::PathBuf> {
     let dir_path_buf: std::path::PathBuf =
         rfd::FileDialog::new().set_directory("/").pick_folder()?;
-    let dir_path: &std::path::Path = dir_path_buf.as_path();
-    std::println!("dir_path: {:?}", dir_path);
+    //let dir_path: &std::path::Path = dir_path_buf.as_path();
+    std::println!("dir_path: {:?}", &dir_path_buf.as_path());
 
-    return Some(());
+    return Some(dir_path_buf);
 }
 
 pub fn to_string(archive: &FalloutArchive) {
