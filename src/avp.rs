@@ -9,7 +9,11 @@ pub struct FalloutArchive<'a> {
 
 impl<'a> Default for FalloutArchive<'a> {
     fn default() -> Self {
-        Self { archive: Default::default(), options: Default::default(), path_buf: Default::default() }
+        Self {
+            archive: Default::default(),
+            options: Default::default(),
+            path_buf: Default::default(),
+        }
     }
 }
 impl<'a> FalloutArchive<'a> {}

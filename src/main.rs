@@ -10,8 +10,8 @@ struct AppGUI {
     #[serde(skip)] // opt-out of serialization of this field
     version: (u32, u32, u32), // semver 2.0.0
     selected_archive_name: String,
-    selected_directory_name: String,
     selected_archive_path: std::path::PathBuf,
+    selected_directory_path: std::path::PathBuf,
 }
 impl AppGUI {
     fn new(_cc: &eframe::CreationContext<'_>) -> Self {
@@ -24,8 +24,8 @@ impl Default for AppGUI {
             name: String::from("[archive-version-patcher]"),
             version: (0, 1, 0),
             selected_archive_name: String::from("Not specified"),
-            selected_directory_name: String::from("Not specified"),
             selected_archive_path: Default::default(),
+            selected_directory_path: Default::default(),
         }
     }
 }
@@ -70,10 +70,10 @@ impl eframe::App for AppGUI {
 
             // section: archive selection
             ui.horizontal(|ui: &mut egui::Ui| {
-                ui.label("Select an archive to patch:");
+                ui.label("Target archive: ".to_owned() + &self.selected_archive_name);
             });
             if ui
-                .button(egui::RichText::new("Select Archive").color(egui::Color32::GREEN))
+                .button(egui::RichText::new("Select Archive").color(egui::Color32::ORANGE))
                 .clicked()
             {
                 std::println!("Select Archive button clicked"); // temp
@@ -92,31 +92,44 @@ impl eframe::App for AppGUI {
             ui.add_space(7.5); // space between button selectors
 
             ui.horizontal(|ui: &mut egui::Ui| {
-                ui.label("Select a directory to patch:");
+                ui.label(
+                    "Target directory: ".to_owned()
+                        + &self
+                            .selected_directory_path
+                            .clone()
+                            .into_os_string()
+                            .into_string()
+                            .unwrap(),
+                );
             });
             if ui
-                .button(egui::RichText::new("Select Directory").color(egui::Color32::GREEN))
+                .button(egui::RichText::new("Select Directory").color(egui::Color32::ORANGE))
                 .clicked()
             {
                 std::println!("Select Directory button clicked"); // temp
-                let selected_dir = avp::appgui_button_select_directory();
+                let selected_dir: Option<std::path::PathBuf> = avp::appgui_button_select_directory();
                 match selected_dir {
-                    Some(_) => {
+                    Some(dir) => {
                         std::println!("some: main_appgui_button_select_directory");
+                        std::println!("dir: {:?}", dir);
+                        self.selected_directory_path = dir;
                         //
                     }
                     None => std::println!("error: main_appgui_button_select_directory"),
                 }
             }
 
-            // section: status/target/run
             ui.separator();
-            ui.horizontal(|ui: &mut egui::Ui| {
-                ui.label("Target archive name: ".to_owned() + &self.selected_archive_name);
-            });
-            ui.horizontal(|ui: &mut egui::Ui| {
-                ui.label("Target directory name: ".to_owned() + &self.selected_directory_name);
-            });
+
+            // section: status/target/run
+            //ui.add_space(15.0);
+
+            if ui
+                .button(egui::RichText::new("Patch").color(egui::Color32::GREEN))
+                .clicked()
+            {
+                std::println!("Patch button clicked"); // temp
+            }
             ui.horizontal(|ui: &mut egui::Ui| {
                 ui.label("Patching progress:");
             });
