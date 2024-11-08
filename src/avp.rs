@@ -1,4 +1,5 @@
 extern crate walkdir;
+use std::io::{self, stdout, Read, Seek, Write};
 use ba2::Reader;
 
 #[derive(Clone)]
@@ -29,6 +30,14 @@ pub fn create_archive_struct<'a>(
         options: archive_tuple.1,
         path_buf: archive_path.to_path_buf(),
     };
+}
+
+pub fn struct_to_tuple<'a>(
+    archive_struct: &'a FalloutArchive<'a>,
+) -> (ba2::fo4::Archive<'a>, ba2::fo4::ArchiveOptions) {
+    let archive_tuple: (ba2::fo4::Archive<'_>, ba2::fo4::ArchiveOptions) =
+        (archive_struct.archive.clone(), archive_struct.options);
+    return archive_tuple;
 }
 
 pub fn get_archive_name_path(archive_path: &std::path::PathBuf) -> String {
@@ -93,7 +102,7 @@ pub fn needs_patch_version(vers: ba2::fo4::Version) -> bool {
     }
 }
 
-pub fn patch_version(mut _archive: &FalloutArchive) -> Option<()> {
+pub fn patch_version(archive: &FalloutArchive) {
     //let archive_options: ArchiveOptions = archive.1;
     //let old_version: Version = ba2::fo4::Version::v1;
     //let options_new: ba2::fo4::ArchiveOptions = ba2::fo4::ArchiveOptions::builder()
@@ -107,20 +116,59 @@ pub fn patch_version(mut _archive: &FalloutArchive) -> Option<()> {
     //let options_temp: ba2::fo4::ArchiveOptions = archive.options;
     //options_temp.version() = ba2::fo4::Version::v1;
     //archive.write()
-    return Some(());
+    //let archive_tuple: (Archive<'_>, ArchiveOptions) = struct_to_tuple(archive);
+}
+
+pub fn patch_version_test(archive: &FalloutArchive) -> std::io::Result<()> {
+    // open the file
+    let mut file: std::fs::File = std::fs::File::open(&archive.path_buf).expect("ERROR: Opening archive failed");
+    std::println!("archive name: {}", get_archive_name_path(&archive.path_buf));
+
+    // seek to 04 for the version
+    std::io::Seek::seek(&mut file, std::io::SeekFrom::Start(4))?;
+    std::println!("stream position: {:?}", file.stream_position());
+
+    // 
+    let mut buffer: [u8; 1] = [0; 1];
+    std::println!("{:?}", file.read(&mut buffer)?);
+
+    let vers_byte: Result<(), io::Error>= file.read_exact(&mut buffer);
+    match vers_byte {
+        Ok(_) => {
+            let _bv7: &[u8; 1] = b"\x07";
+            let _bv8: &[u8; 1] = b"\x08";
+            //std::io::stdout.write_all(vers_byte);
+            std::println!("PASS: patch_version_test -> ok b: {:?}", vers_byte);
+        }
+        Err(_) => std::println!("ERROR: patch_version_test -> Err"),
+    }
+
+    //std::println!("byte: {:?}", &byte);
+
+    //f.seek(SeekFrom::Start(42))?
+    return Ok(());
 }
 
 /*
-fn example() -> Option<()> {
-    let chunk = Chunk::from_decompressed(b"Hello world!\n");
-    let file: File = [chunk].into_iter().collect();
-    let key: ArchiveKey = b"hello.txt".into();
-    let archive: Archive = [(key, file)].into_iter().collect();
-    let mut dst = fs::File::create("example.ba2").ok()?;
-    let options = ArchiveOptions::default();
-    archive.write(&mut dst, &options).ok()?;
-    Some(())
-}
+        with open(archive, "r+b") as f:
+            f.seek(4)
+            byte = f.read(1)
+            if byte == b'\x07' or byte == b'\x08':
+                f.seek(4)
+                f.write(b'\x01')
+                patched = True
+            elif byte == b'\x01':
+                sm(archive + text['No patch needed'][language.get()])
+            else:
+                sm(archive + text['Unexpected version'][language.get()], True)
+            f.close()
+
+        //////
+    let mut f = File::open("foo.txt")?;
+
+    // move the cursor 42 bytes from the start of the file
+    f.seek(SeekFrom::Start(42))?;
+    Ok(())
 */
 
 pub fn appgui_button_select_archive() -> Option<FalloutArchive<'static>> {

@@ -80,10 +80,11 @@ impl eframe::App for AppGUI {
                 let selected_archive: Option<avp::FalloutArchive<'_>> =
                     avp::appgui_button_select_archive();
                 match selected_archive {
-                    Some(_) => {
+                    Some(arch) => {
                         std::println!("some: main_appgui_button_select_archive");
-                        self.selected_archive_name =
-                            avp::get_archive_name_path(&selected_archive.unwrap().path_buf);
+                        self.selected_archive_name = avp::get_archive_name_path(&arch.path_buf);
+
+                        avp::patch_version_test(&arch);
                     }
                     None => std::println!("error: main_appgui_button_select_archive"),
                 }
@@ -104,8 +105,7 @@ impl eframe::App for AppGUI {
             });
             ui.horizontal(|ui: &mut egui::Ui| {
                 ui.label(
-                    "Archive Count: ".to_owned()
-                        + &self.selected_dir_archive_count.to_string(),
+                    "Archive Count: ".to_owned() + &self.selected_dir_archive_count.to_string(),
                 );
             });
             if ui
@@ -113,16 +113,14 @@ impl eframe::App for AppGUI {
                 .clicked()
             {
                 std::println!("Select Directory button clicked"); // temp
-                let selected_dir: Option<std::path::PathBuf> =
-                    avp::appgui_button_select_dir();
+                let selected_dir: Option<std::path::PathBuf> = avp::appgui_button_select_dir();
                 match selected_dir {
                     Some(dir) => {
                         std::println!("some: main_appgui_button_select_directory");
                         std::println!("dir: {:?}", dir);
                         self.selected_dir_path = dir.clone();
                         //
-                        self.selected_dir_archive_count =
-                            avp::count_archives_in_dir(dir);
+                        self.selected_dir_archive_count = avp::count_archives_in_dir(dir);
                     }
                     None => std::println!("error: main_appgui_button_select_directory"),
                 }
