@@ -84,7 +84,6 @@ impl eframe::App for AppGUI {
                     Some(arch) => {
                         std::println!("some: main_appgui_button_select_archive");
                         self.selected_archive_name = avp::get_archive_name_path(&arch.path_buf);
-
                         let _ = avp::patch_version_test(&arch);
                     }
                     None => std::println!("error: main_appgui_button_select_archive"),
@@ -121,9 +120,10 @@ impl eframe::App for AppGUI {
                         std::println!("dir: {:?}", dir);
                         self.selected_dir_path = dir.clone();
                         //
-                        self.selected_dir_archive_count = avp::count_archives_in_dir(dir);
+                        self.selected_dir_archive_count = avp::count_archives_in_dir(&dir);
+                        std::println!("{:#?}", avp::get_archives_in_dir(&dir));
                     }
-                    None => std::println!("error: main_appgui_button_select_directory"),
+                    None => std::println!("error none: main_appgui_button_select_directory"),
                 }
             }
 

@@ -185,7 +185,7 @@ pub fn appgui_button_select_dir() -> Option<std::path::PathBuf> {
     return Some(dir_path_buf);
 }
 
-pub fn count_archives_in_dir(dir: std::path::PathBuf) -> u64 {
+pub fn count_archives_in_dir(dir: &std::path::PathBuf) -> u64 {
     let mut total: u64 = 0;
     let extension: Option<&std::ffi::OsStr> = Some(std::ffi::OsStr::new("ba2"));
     for file in walkdir::WalkDir::new(dir)
@@ -201,8 +201,8 @@ pub fn count_archives_in_dir(dir: std::path::PathBuf) -> u64 {
     return total;
 }
 
-pub fn get_archives_in_dir(dir: std::path::PathBuf) -> Vec<FalloutArchive<'static>> {
-    let mut result: Vec<FalloutArchive> = Vec::new();
+pub fn get_archives_in_dir(dir: &std::path::PathBuf) -> Vec<walkdir::DirEntry> {
+    let mut result: Vec<walkdir::DirEntry> = Vec::new();
     let extension: Option<&std::ffi::OsStr> = Some(std::ffi::OsStr::new("ba2"));
     for file in walkdir::WalkDir::new(dir)
         .into_iter()
@@ -210,7 +210,7 @@ pub fn get_archives_in_dir(dir: std::path::PathBuf) -> Vec<FalloutArchive<'stati
     {
         if file.metadata().unwrap().is_file() {
             if file.path().extension() == extension {
-                //result.push(file);
+                result.push(file);
             }
         }
     }
