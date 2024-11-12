@@ -83,6 +83,8 @@ impl eframe::App for AppGUI {
                 match selected_archive {
                     Some(arch) => {
                         std::println!("some: main_appgui_button_select_archive");
+                        std::println!("{}", avp::needs_patch_archive(&arch));
+                        std::println!("{:?}", avp::get_version(&arch));
                         self.selected_archive_name = avp::get_archive_name_path(&arch.path_buf);
                         let _ = avp::patch_version_test(&arch);
                     }

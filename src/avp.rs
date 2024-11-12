@@ -125,7 +125,7 @@ pub fn patch_version_test(archive: &FalloutArchive) -> std::io::Result<()> {
         std::fs::File::open(&archive.path_buf).expect("ERROR: Opening archive failed");
     std::println!("archive name: {}", get_archive_name_path(&archive.path_buf));
 
-    // seek to 04 for the version
+    // seek to 04 for the version byte
     std::io::Seek::seek(&mut file, std::io::SeekFrom::Start(4))?;
     std::println!("stream position: {:?}", file.stream_position());
 
@@ -181,7 +181,6 @@ pub fn appgui_button_select_archive() -> Option<FalloutArchive<'static>> {
 pub fn appgui_button_select_dir() -> Option<std::path::PathBuf> {
     let dir_path_buf: std::path::PathBuf =
         rfd::FileDialog::new().set_directory("/").pick_folder()?;
-
     return Some(dir_path_buf);
 }
 
