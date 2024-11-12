@@ -71,8 +71,8 @@ pub fn get_version_string(archive: &FalloutArchive) -> String {
         ba2::fo4::Version::v1 => return String::from("v1"),
         ba2::fo4::Version::v7 => return String::from("v7"),
         ba2::fo4::Version::v8 => return String::from("v8"),
-        ba2::fo4::Version::v2 => return String::from("v2"),
-        ba2::fo4::Version::v3 => return String::from("v3"),
+        ba2::fo4::Version::v2 => return String::from("v2"), // sf version
+        ba2::fo4::Version::v3 => return String::from("v3"), // sf version
     }
 }
 
@@ -81,8 +81,8 @@ pub fn version_to_string(vers: ba2::fo4::Version) -> String {
         ba2::fo4::Version::v1 => return String::from("v1"),
         ba2::fo4::Version::v7 => return String::from("v7"),
         ba2::fo4::Version::v8 => return String::from("v8"),
-        ba2::fo4::Version::v2 => return String::from("v2"),
-        ba2::fo4::Version::v3 => return String::from("v3"),
+        ba2::fo4::Version::v2 => return String::from("v2"), // sf version
+        ba2::fo4::Version::v3 => return String::from("v3"), // sf version
     }
 }
 
@@ -90,7 +90,7 @@ pub fn needs_patch_archive(archive: &FalloutArchive) -> bool {
     match archive.options.version() {
         ba2::fo4::Version::v1 => return false,
         ba2::fo4::Version::v7 | ba2::fo4::Version::v8 => return true,
-        ba2::fo4::Version::v2 | ba2::fo4::Version::v3 => return false, // sf version, report error
+        ba2::fo4::Version::v2 | ba2::fo4::Version::v3 => return false, // sf version
     }
 }
 
@@ -98,7 +98,7 @@ pub fn needs_patch_version(vers: ba2::fo4::Version) -> bool {
     match vers {
         ba2::fo4::Version::v1 => return false,
         ba2::fo4::Version::v7 | ba2::fo4::Version::v8 => return true,
-        ba2::fo4::Version::v2 | ba2::fo4::Version::v3 => return false, // sf version, report error
+        ba2::fo4::Version::v2 | ba2::fo4::Version::v3 => return false, // sf version
     }
 }
 
@@ -134,14 +134,16 @@ pub fn patch_version_test(archive: &FalloutArchive) -> std::io::Result<()> {
     std::println!("{:?}", file.read(&mut buffer)?);
     let vers_byte: Result<(), io::Error> = file.read_exact(&mut buffer);
 
-    // write to the byte at 04
+    // attempt to write to the byte at 04
     match vers_byte {
         Ok(_) => {
             let _byte_vers7: &[u8; 1] = b"\x07";
             let _byte_vers8: &[u8; 1] = b"\x08";
             std::println!("PASS: patch_version_test -> ok b: {:?}", vers_byte);
         }
-        Err(_) => std::println!("ERROR: patch_version_test -> Err"),
+        Err(_) => {
+            std::println!("ERROR: patch_version_test -> Err");
+        }
     }
 
     return Ok(());
