@@ -15,3 +15,10 @@ pub struct ConfigOptions {
     language: u32,
 }
 impl ConfigOptions {}
+
+#[allow(dead_code)]
+pub enum Language {
+    English,
+    German,
+}
+impl Language {}

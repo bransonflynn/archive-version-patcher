@@ -1,7 +1,6 @@
 // modules
 pub mod avp;
 pub mod avp_config;
-pub mod avp_data;
 
 #[derive(serde::Deserialize, serde::Serialize)]
 #[serde(default)]
@@ -13,6 +12,7 @@ struct AppGUI {
     selected_archive_path: std::path::PathBuf,
     selected_dir_path: std::path::PathBuf,
     selected_dir_archive_count: u64,
+    // add language field here to read from based on config
 }
 impl AppGUI {
     fn new(_cc: &eframe::CreationContext<'_>) -> Self {
@@ -28,6 +28,7 @@ impl Default for AppGUI {
             selected_archive_path: Default::default(),
             selected_dir_path: String::from("Not specified").into(),
             selected_dir_archive_count: 0,
+            // add language field here to read from based on config
         }
     }
 }
@@ -84,7 +85,7 @@ impl eframe::App for AppGUI {
                         std::println!("some: main_appgui_button_select_archive");
                         self.selected_archive_name = avp::get_archive_name_path(&arch.path_buf);
 
-                        avp::patch_version_test(&arch);
+                        let _ = avp::patch_version_test(&arch);
                     }
                     None => std::println!("error: main_appgui_button_select_archive"),
                 }

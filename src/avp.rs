@@ -1,6 +1,6 @@
 extern crate walkdir;
-use std::io::{self, stdout, Read, Seek, Write};
 use ba2::Reader;
+use std::io::{self, Read, Seek};
 
 #[derive(Clone)]
 pub struct FalloutArchive<'a> {
@@ -102,7 +102,7 @@ pub fn needs_patch_version(vers: ba2::fo4::Version) -> bool {
     }
 }
 
-pub fn patch_version(archive: &FalloutArchive) {
+pub fn patch_version(_archive: &FalloutArchive) {
     //let archive_options: ArchiveOptions = archive.1;
     //let old_version: Version = ba2::fo4::Version::v1;
     //let options_new: ba2::fo4::ArchiveOptions = ba2::fo4::ArchiveOptions::builder()
@@ -121,35 +121,35 @@ pub fn patch_version(archive: &FalloutArchive) {
 
 pub fn patch_version_test(archive: &FalloutArchive) -> std::io::Result<()> {
     // open the file
-    let mut file: std::fs::File = std::fs::File::open(&archive.path_buf).expect("ERROR: Opening archive failed");
+    let mut file: std::fs::File =
+        std::fs::File::open(&archive.path_buf).expect("ERROR: Opening archive failed");
     std::println!("archive name: {}", get_archive_name_path(&archive.path_buf));
 
     // seek to 04 for the version
     std::io::Seek::seek(&mut file, std::io::SeekFrom::Start(4))?;
     std::println!("stream position: {:?}", file.stream_position());
 
-    // 
+    // setup to write to the byte at 04
     let mut buffer: [u8; 1] = [0; 1];
     std::println!("{:?}", file.read(&mut buffer)?);
+    let vers_byte: Result<(), io::Error> = file.read_exact(&mut buffer);
 
-    let vers_byte: Result<(), io::Error>= file.read_exact(&mut buffer);
+    // write to the byte at 04
     match vers_byte {
         Ok(_) => {
-            let _bv7: &[u8; 1] = b"\x07";
-            let _bv8: &[u8; 1] = b"\x08";
-            //std::io::stdout.write_all(vers_byte);
+            let _byte_vers7: &[u8; 1] = b"\x07";
+            let _byte_vers8: &[u8; 1] = b"\x08";
             std::println!("PASS: patch_version_test -> ok b: {:?}", vers_byte);
         }
         Err(_) => std::println!("ERROR: patch_version_test -> Err"),
     }
 
-    //std::println!("byte: {:?}", &byte);
-
-    //f.seek(SeekFrom::Start(42))?
     return Ok(());
 }
 
 /*
+    doubleyou's py code for editing bytes:
+    //
         with open(archive, "r+b") as f:
             f.seek(4)
             byte = f.read(1)
@@ -162,13 +162,6 @@ pub fn patch_version_test(archive: &FalloutArchive) -> std::io::Result<()> {
             else:
                 sm(archive + text['Unexpected version'][language.get()], True)
             f.close()
-
-        //////
-    let mut f = File::open("foo.txt")?;
-
-    // move the cursor 42 bytes from the start of the file
-    f.seek(SeekFrom::Start(42))?;
-    Ok(())
 */
 
 pub fn appgui_button_select_archive() -> Option<FalloutArchive<'static>> {
@@ -207,10 +200,22 @@ pub fn count_archives_in_dir(dir: std::path::PathBuf) -> u64 {
     }
     return total;
 }
-/*
-extern crate walkdir;
-use walkdir::WalkDir;
-*/
+
+pub fn get_archives_in_dir(dir: std::path::PathBuf) -> Vec<FalloutArchive<'static>> {
+    let mut result: Vec<FalloutArchive> = Vec::new();
+    let extension: Option<&std::ffi::OsStr> = Some(std::ffi::OsStr::new("ba2"));
+    for file in walkdir::WalkDir::new(dir)
+        .into_iter()
+        .filter_map(|file: Result<walkdir::DirEntry, walkdir::Error>| file.ok())
+    {
+        if file.metadata().unwrap().is_file() {
+            if file.path().extension() == extension {
+                //result.push(file);
+            }
+        }
+    }
+    return result;
+}
 
 pub fn to_string(archive: &FalloutArchive) {
     // TODO should be added as a default/proper impl in the struct
