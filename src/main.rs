@@ -12,7 +12,7 @@ struct AppGUI {
     selected_archive_path: std::path::PathBuf,
     selected_dir_path: std::path::PathBuf,
     selected_dir_archive_count: u64,
-    // add language field here to read from based on config
+    language: u8,
 }
 impl AppGUI {
     fn new(_cc: &eframe::CreationContext<'_>) -> Self {
@@ -28,7 +28,7 @@ impl Default for AppGUI {
             selected_archive_path: Default::default(),
             selected_dir_path: String::from("Not specified").into(),
             selected_dir_archive_count: 0,
-            // add language field here to read from based on config
+            language: avp_config::get_language_int(),
         }
     }
 }
@@ -89,6 +89,7 @@ impl eframe::App for AppGUI {
                         let _ = avp::patch_version_test(&arch);
                     }
                     None => std::println!("error: main_appgui_button_select_archive"),
+                    //self.selected_archive_name = String::from("Not specified");
                 }
             }
 

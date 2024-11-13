@@ -22,3 +22,8 @@ pub enum Language {
     German,
 }
 impl Language {}
+
+pub fn get_language_int() -> u8 {
+    // todo
+    return 0;
+}

@@ -1,6 +1,6 @@
 extern crate walkdir;
 use ba2::Reader;
-use std::io::{self, Read, Seek};
+use std::io::{Read, Write};
 
 #[derive(Clone)]
 pub struct FalloutArchive<'a> {
@@ -125,26 +125,23 @@ pub fn patch_version_test(archive: &FalloutArchive) -> std::io::Result<()> {
         std::fs::File::open(&archive.path_buf).expect("ERROR: Opening archive failed");
     std::println!("archive name: {}", get_archive_name_path(&archive.path_buf));
 
-    // seek to 04 for the version byte
-    std::io::Seek::seek(&mut file, std::io::SeekFrom::Start(4))?;
-    std::println!("stream position: {:?}", file.stream_position());
+    // setup first 5 bytes
+    let mut buf: [u8; 5] = [0u8; 5];
+    file.read_exact(&mut buf)?;
+    println!("read {} bytes: {:?}", buf.len(), buf);
+    buf[4] = 1;
+    println!("new buf: read {} bytes: {:?}", buf.len(), buf);
 
-    // setup to write to the byte at 04
-    let mut buffer: [u8; 1] = [0; 1];
-    std::println!("{:?}", file.read(&mut buffer)?);
-    let vers_byte: Result<(), io::Error> = file.read_exact(&mut buffer);
+    // write bytes
+    //file.write(&mut buf)?;  // permissions error
 
-    // attempt to write to the byte at 04
-    match vers_byte {
-        Ok(_) => {
-            let _byte_vers7: &[u8; 1] = b"\x07";
-            let _byte_vers8: &[u8; 1] = b"\x08";
-            std::println!("PASS: patch_version_test -> ok b: {:?}", vers_byte);
-        }
-        Err(_) => {
-            std::println!("ERROR: patch_version_test -> Err");
-        }
+    match file.write(&mut buf) {
+        Ok(_) => std::println!("file write ok"),
+        Err(_) => std::println!("file write err"),
     }
+    
+    file.read_exact(&mut buf)?;
+    println!("read {} bytes: {:?}", buf.len(), buf);
 
     return Ok(());
 }
