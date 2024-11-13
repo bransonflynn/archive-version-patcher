@@ -122,26 +122,26 @@ pub fn patch_version(_archive: &FalloutArchive) {
 pub fn patch_version_test(archive: &FalloutArchive) -> std::io::Result<()> {
     // open the file
     let mut file: std::fs::File =
-        std::fs::File::open(&archive.path_buf).expect("ERROR: Opening archive failed");
+        std::fs::File::create(&archive.path_buf).expect("ERROR: Opening archive failed");
     std::println!("archive name: {}", get_archive_name_path(&archive.path_buf));
 
     // setup first 5 bytes
     let mut buf: [u8; 5] = [0u8; 5];
     file.read_exact(&mut buf)?;
-    println!("read {} bytes: {:?}", buf.len(), buf);
-    buf[4] = 1;
-    println!("new buf: read {} bytes: {:?}", buf.len(), buf);
+    std::println!("read {} bytes: {:?}", buf.len(), buf);
+    buf[4] = 1; // setup archive version 1 at index 4
+    std::println!("new buf: read {} bytes: {:?}", buf.len(), buf);
 
     // write bytes
-    //file.write(&mut buf)?;  // permissions error
-
     match file.write(&mut buf) {
-        Ok(_) => std::println!("file write ok"),
-        Err(_) => std::println!("file write err"),
+        Ok(_) => {
+            std::println!("file write OK");
+        }
+        Err(_) => {
+            std::println!("file write ERR");
+        }
     }
-    
-    file.read_exact(&mut buf)?;
-    println!("read {} bytes: {:?}", buf.len(), buf);
+    std::println!("read {} bytes: {:?}", buf.len(), buf);
 
     return Ok(());
 }
