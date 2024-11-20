@@ -103,26 +103,14 @@ pub fn needs_patch_version(vers: ba2::fo4::Version) -> bool {
 }
 
 pub fn patch_version(_archive: &FalloutArchive) {
-    //let archive_options: ArchiveOptions = archive.1;
-    //let old_version: Version = ba2::fo4::Version::v1;
-    //let options_new: ba2::fo4::ArchiveOptions = ba2::fo4::ArchiveOptions::builder()
-    //    .version(ba2::fo4::Version::v1)
-    //    .build();
-    //archive.1 = options_new;
-
-    //let _ = ba2::fo4::FileWriteOptions::builder()
-    //    .compression_format(ba2::fo4::CompressionFormat::Zip)
-    //    .build();
-    //let options_temp: ba2::fo4::ArchiveOptions = archive.options;
-    //options_temp.version() = ba2::fo4::Version::v1;
-    //archive.write()
-    //let archive_tuple: (Archive<'_>, ArchiveOptions) = struct_to_tuple(archive);
+    //
 }
 
 pub fn patch_version_test(archive: &FalloutArchive) -> std::io::Result<()> {
     // open the file
+    // todo - issue is that "open" opens the file in read-only mode
     let mut file: std::fs::File =
-        std::fs::File::create(&archive.path_buf).expect("ERROR: Opening archive failed");
+        std::fs::File::create(&archive.path_buf).expect("ERROR: Unable to create file");
     std::println!("archive name: {}", get_archive_name_path(&archive.path_buf));
 
     // setup first 5 bytes
